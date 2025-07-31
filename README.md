@@ -2,9 +2,9 @@
 
 Welcome to **AllPrice – The Smart Hub for Listings & Integrations**, a robust SaaS platform that centralizes product, stock, and pricing management for e-commerce businesses. Designed for agility, automation, and full control, AllPrice empowers retail operations by eliminating repetitive tasks, syncing ERPs and marketplaces, and bringing real-time visibility to every SKU.
 
-You can access the [project's live website here](https://allprice.app.br/).
+You can access the [project's live website here](https://spaceapps.com.br/).
 
-![Project's Cover](https://i.imgur.com/7pWPKJD.png)
+![Project's Cover](https://i.imgur.com/XRKNqUD.png)
 
 > AllPrice simplifies your tech stack. One login, full control — across ERPs like Tiny and Bling, and marketplaces such as Mercado Livre, Shopee, and Mercado Livre Full.
 
