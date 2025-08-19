@@ -22,5 +22,68 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Impact', 'Signika', 'Roboto', 'Outfit', sans-serif;
+}
+
+h1 {
+  font-family: 'Impact', serif;
+  font-weight: 400;
+  font-size: 3.5rem;
+  line-height: 53px;
+}
+
+h3 {
+  font-family: 'Signika', sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 16.2px;
+}
+
+/* tag */
+h6 {
+  font-family: 'Signika', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 11.5px;
+}
+
+p {
+  font-family: 'Roboto', serif;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 24px;
+}
+
+a {
+  font-family: 'Outfit', serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  line-height: 26.9px;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+    line-height: 120%
+  }
+
+  h2 {
+    font-size: 1.125rem;
+    line-height: 120%
+  }
+
+  h6 {
+    line-height: 120%;
+  }
+
+  p {
+    font-size: 1.125rem;
+    line-height: 160%;
+  }
+
+  a {
+    font-size: 1rem;
+    line-height: 140%;
+  }
 }
