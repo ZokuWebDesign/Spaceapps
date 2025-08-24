@@ -6,32 +6,32 @@ import { Button } from '../ui/button';
 const Companies = () => {
   // Company logos data with image sources
   const companies = [
-    { logo: "/assets/logo/company-1.svg", alt: "Cliente 1 Logo" },
-    { logo: "/assets/logo/allprice.svg", alt: "Allprice Company Logo" },
+    { logo: "https://i.ibb.co/Gf2LBBgy/unimed.webp", alt: "Unimed Logo" },
+    { logo: "/assets/logo/allprice.svg", alt: "Allprice Logo" },
     { logo: "/assets/logo/viphostel.svg", alt: "VipHostel Logo" },
-    { logo: "/assets/logo/company-4.svg", alt: "Cliente 4 Logo" },
-    { logo: "/assets/logo/ecota.svg", alt: "Ecota Company Logo" },
+    { logo: "/assets/logo/celus.svg", alt: "Celus Logo" },
+    { logo: "/assets/logo/ecota.svg", alt: "Ecota Logo" },
     { logo: "/assets/logo/ugrega.svg", alt: "UGREGA Logo" },
     { logo: "/assets/logo/cupomapp.svg", alt: "CUPOMAPP Logo" },
     { logo: "/assets/logo/gestrif.svg", alt: "Gestrif Logo" },
     { logo: "/assets/logo/meinho.svg", alt: "Meinho Logo" },
-    { logo: "/assets/logo/syd.svg", alt: "SYD Save Your Day Logo" },
+    { logo: "/assets/logo/syd.svg", alt: "SYD Logo" },
     { logo: "/assets/logo/upos.svg", alt: "upOS Logo" },
     { logo: "/assets/logo/petlife.svg", alt: "PetLife Logo" },
     { logo: "/assets/logo/jusprod.svg", alt: "Jusprod Logo" },
     { logo: "/assets/logo/workflow.svg", alt: "Workflow Systems Logo" },
     { logo: "/assets/logo/meconta.svg", alt: "meconta Logo" },
-    { logo: "/assets/logo/miaki.svg", alt: "Universidade Miaki Logo" },
-    { logo: "/assets/logo/superselos.svg", alt: "SUPERSELOS Logo" },
+    { logo: "https://i.ibb.co/BHXkmc4y/miaki.webp", alt: "Universidade Miaki Logo" },
+    { logo: "/assets/logo/superselos.svg", alt: "SuperSelos Logo" },
     { logo: "/assets/logo/tatalogos.svg", alt: "TataLogos Logo" },
-    { logo: "/assets/logo/company-19.svg", alt: "Company 19 Logo" },
+    { logo: "/assets/logo/fans.svg", alt: "Fans Logo" },
     { logo: "/assets/logo/techlideres.svg", alt: "TechLíderes Logo" },
-    { logo: "/assets/logo/company-21.svg", alt: "Company 21 Logo" },
+    { logo: "https://i.ibb.co/Xxsr3ZfY/qualydent.webp", alt: "QualyDent Logo" },
     { logo: "/assets/logo/monew.svg", alt: "MONEW Logo" },
     { logo: "/assets/logo/carcode.svg", alt: "CarCode Logo" },
     { logo: "/assets/logo/everpetz.svg", alt: "EverPetz Logo" },
     { logo: "/assets/logo/sbd.svg", alt: "SBD Shine Bright Day Logo" },
-    { logo: "/assets/logo/clinica-rocha.svg", alt: "Clínica Rocha Logo" },
+    { logo: "https://i.ibb.co/TMd7Npgf/clinicarocha.webp", alt: "Clínica Rocha Logo" },
     { logo: "/assets/logo/direitoapp.svg", alt: "DireitoApp Logo" },
     { logo: "/assets/logo/bankmy.svg", alt: "bankmy Logo" }
   ];
@@ -85,8 +85,8 @@ const Companies = () => {
         </div>
 
         {/* Bottom spacing for visual balance */}
-        <div className="mt-16 text-center">
-          <p className="text-gray-400 text-sm">
+        <div className="pt-16 text-center">
+          <p className="text-gray-400 text-base">
             Junte-se a essas empresas incríveis em nossa jornada pelo espaço digital
           </p>
         </div>

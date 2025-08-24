@@ -11,49 +11,49 @@ const Hero = () => {
           <img
             src="/assets/vectors/shooting-star.svg"
             alt="Shooting star"
-            className="absolute top-[10%] left-[-10%] w-[1200px] h-[740px] z-0 animate-shooting-star"
+            className="absolute top-[10%] left-[-10%] w-[390px] lg:w-[1200px] h-[240px] lg:h-[740px] z-0 animate-shooting-star"
           />
           
           {/* Stars scattered throughout */}
           <img
             src="/assets/vectors/stars.svg"
             alt="Stars"
-            className="absolute top-[5%] left-[8%] w-[1100px] h-[850px] z-0 animate-twinkle"
+            className="absolute top-[5%] left-[8%] w-[390px] lg:w-[1100px] h-[301px] lg:h-[850px] z-0 animate-twinkle"
           />
           
           {/* Planet 1 - Small planet upper right */}
           <img
             src="/assets/vectors/planet-1.svg"
             alt="Planet 1"
-            className="absolute top-[5%] right-[27%] w-[66px] h-[66px] z-10 animate-spin-slow"
+            className="absolute top-[5%] right-[5%] lg:right-[27%] w-[66px] h-[66px] z-10 animate-spin-slow"
           />
           
           {/* Planet 2 - Medium planet upper left */}
           <img
             src="/assets/vectors/planet-2.svg"
             alt="Planet 2"
-            className="absolute top-[23%] left-[5%] w-[164px] h-[164px] z-10 animate-orbit-float"
+            className="absolute top-[28%] lg:top-[23%] left-[5%] w-24 lg:w-[164px] h-24 lg:h-[164px] z-10 animate-orbit-float"
           />
           
           {/* Planet 3 - Large planet upper right */}
           <img
             src="/assets/vectors/planet-3.svg"
             alt="Planet 3"
-            className="absolute top-[18%] right-[1%] w-[300px] h-[300px] z-5 animate-spin-reverse"
+            className="absolute top-[18%] right-[1%] w-32 lg:w-[300px] h-32 lg:h-[300px] z-5 animate-spin-reverse"
           />
           
           {/* Astronaut 1 - Bottom right */}
           <img
             src="/assets/vectors/astronaut-1.svg"
             alt="Astronaut 1"
-            className="absolute bottom-[18%] right-[0%] w-[224px] h-[208px] z-30 animate-levitate"
+            className="absolute bottom-[5%] lg:bottom-[18%] right-[0%] w-[140px] lg:w-[224px] h-[130px] lg:h-[208px] z-30 animate-levitate"
           />
           
           {/* Astronaut 2 - Bottom left */}
           <img
             src="/assets/vectors/astronaut-2.svg"
             alt="Astronaut 2"
-            className="absolute bottom-[8%] left-[0%] w-[232px] h-[130px] z-10 animate-levitate-slow"
+            className="absolute bottom-[0%] lg:bottom-[8%] left-[0%] w-[150px] lg:w-[232px] h-[84px] lg:h-[130px] z-10 animate-levitate-slow"
           />
         </div>
       </div>

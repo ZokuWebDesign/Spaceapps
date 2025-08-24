@@ -3,21 +3,11 @@ import { Button } from "../ui/button";
 
 const Contact = () => {
   return (
-    <section className="bg-black py-20">
-      <div className="max-w-[1280px] mx-auto px-4">
+    <section className="flex flex-col items-center max-w-7xl mx-auto py-20">
+
         {/* Main content container with gradient background and border */}
         <div 
-          className="relative rounded-[30px] p-16 backdrop-blur-sm"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(143, 143, 143, 0.21) 100%)',
-            border: '1px solid transparent',
-            backgroundImage: `
-              linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(143, 143, 143, 0.21) 100%),
-              linear-gradient(135deg, rgba(224, 37, 206, 0.7) 0%, rgba(255, 255, 255, 0) 50.52%, rgba(189, 36, 230, 0.7) 100%)
-            `,
-            backgroundOrigin: 'border-box',
-            backgroundClip: 'content-box, border-box'
-          }}
+          className="flex flex-col gap-8 relative w-[998px] pt-[74px] pb-[50px] rounded-[6px] bg-gradient-to-br from-white/10 to-gray-500/20 border border-tertiary backdrop-blur-sm overflow-hidden"
         >
           {/* Header Section */}
           <div className="text-center mb-12">
@@ -79,7 +69,6 @@ const Contact = () => {
             </div>
           </div>
         </div>
-      </div>
     </section>
   );
 };
