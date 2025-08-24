@@ -94,8 +94,8 @@ const Checklist = () => {
     >
       <div className="flex flex-col gap-8 max-w-7xl mx-auto">
         {/* Title Section */}
-        <div className="flex flex-col text-center gap-6 max-w-[898px] mx-auto">
-          <h1 className="text-white text-[56px] font-normal leading-[68px] tracking-[2.8px]">
+        <div className="flex flex-col text-center gap-6 max-w-[898px] mx-auto px-4 lg:px-0">
+          <h1 className="text-white">
             Checklist da decolagem
           </h1>
           <p className="text-white text-[20px] font-normal leading-[24px]">
@@ -106,7 +106,7 @@ const Checklist = () => {
         {/* Cards Grid */}
         <div 
           ref={containerRef}
-          className="flex flex-row overflow-x-auto gap-[30px] px-[50px] cursor-grab active:cursor-grabbing scrollbar-hide select-none"
+          className="flex flex-row overflow-x-auto gap-4 lg:gap-[30px] px-4 lg:px-[50px] cursor-grab active:cursor-grabbing scrollbar-hide select-none"
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
@@ -120,7 +120,7 @@ const Checklist = () => {
                 if (el) cardRefs.current[index] = el;
               }}
               className={`
-                flex flex-col min-w-[440px] min-h-[606px] px-6 pt-[40px] pb-8 gap-[40px] bg-gradient-to-br from-white/15 to-white/0 border border-tertiary 
+                flex flex-col min-w-[324px] lg:min-w-[440px] min-h-[560px] lg:min-h-[606px] px-4 lg:px-6 py-6 lg:pt-[40px] lg:pb-8 gap-6 lg:gap-[40px] bg-gradient-to-br from-white/15 to-white/0 border border-tertiary 
                 rounded-[20px] backdrop-blur-sm
                 transition-all duration-1000 transform
                 ${visibleCards[index] 
@@ -130,20 +130,20 @@ const Checklist = () => {
               `}
             >
               {/* Header */}
-              <div className="flex items-start gap-[20px]">
+              <div className="flex items-start gap-4 lg:gap-[20px]">
                 {/* Icon Profile */}
                 <img 
                   src="/assets/logo/space-profile.svg"
                   alt="Space Logo"
-                  className="w-[62px] h-[62px]"
+                  className="w-12 lg:w-[62px] h-12 lg:h-[62px]"
                 />
                 
                 {/* Title */}
                 <div className="flex-1 h-full flex flex-col justify-center">
-                  <h3 className="text-white text-[22px] leading-[150%] font-['Poppins']">
+                  <h3 className="text-white leading-[150%] font-['Poppins']">
                     {phase.phase}
                   </h3>
-                  <p className="text-white text-[16px] leading-[150%] font-['Poppins'] -mt-[2px]">
+                  <p className="text-white leading-[150%] font-['Poppins'] -mt-[2px]">
                     {phase.subtitle}
                   </p>
                 </div>

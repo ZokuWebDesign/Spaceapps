@@ -94,14 +94,12 @@ const Hero = () => {
           </div>
 
           {/* CTA Button */}
-          <div className="mb-12">
-            <Button 
-              size="base"
-              className="text-[20px] font-extrabold"
-            >
-              FALAR COM O DAVI
-            </Button>
-          </div>
+          <Button 
+            size="base"
+            className="w-full lg:w-[282px] mb-12 text-[20px] font-extrabold"
+          >
+            FALAR COM O DAVI
+          </Button>
 
           {/* Dashboard Preview */}
           <div className="w-full max-w-[1053px]">

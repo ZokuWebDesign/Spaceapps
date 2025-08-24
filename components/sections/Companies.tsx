@@ -45,7 +45,7 @@ const Companies = () => {
         className="absolute z-0 w-[1206px] h-[1206px] w-full h-full object-cover animate-twinkle"
       />
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 lg:px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-16 max-w-4xl mx-auto">
           <h1 className="mb-6 tracking-wider text-transform: uppercase text-white">
@@ -57,15 +57,13 @@ const Companies = () => {
           </p>
           
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button>
-              FALAR COM DAVI
-            </Button>
-          </div>
+          <Button size="md" className="w-full lg:w-[282px]">
+            FALAR COM DAVI
+          </Button>
         </div>
 
         {/* Companies Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-8 max-w-6xl mx-auto">
           {companies.map((company, index) => (
             <div
               key={index}

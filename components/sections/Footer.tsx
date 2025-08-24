@@ -3,11 +3,14 @@
 const Footer = () => {
   return (
     <footer className="relative">
-      {/* Background with space theme and glassmorphism */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0F0C29] via-[#24243e] to-[#302b63]">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0 backdrop-blur-sm"></div>
-      </div>
+      {/* Background with glassmorphism */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(139deg, rgba(255, 255, 255, 0.04) -6.39%, rgba(143, 143, 143, 0.02) 112.17%)',
+          backdropFilter: 'blur(12.5px)'
+        }}
+      ></div>
       
       <div className="relative w-full mx-auto max-w-7xl px-6 lg:px-12 py-[27px]">
           {/* Main footer content */}

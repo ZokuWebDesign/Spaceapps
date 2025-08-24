@@ -77,7 +77,7 @@ const AboutUs = () => {
   };
 
   return (
-    <section className="relative pt-[50px] pb-[101px] px-12 text-white overflow-hidden select-none">
+    <section className="relative pt-[50px] pb-[101px] px-4 lg:px-12 text-white overflow-hidden select-none">
       
       <img 
         src="/assets/vectors/stars.svg" 
@@ -86,13 +86,13 @@ const AboutUs = () => {
       />
 
       {/* Background container */}
-      <div className="container max-w-[1182px] mx-auto relative z-10">
+      <div className="md:container max-w-[1182px] mx-auto relative z-10">
         {/* Main content container with gradient background and border */}
         <div className="flex flex-col gap-8 relative pt-[74px] pb-[50px] rounded-[6px] bg-gradient-to-br from-white/10 to-gray-500/20 border border-tertiary backdrop-blur-sm overflow-hidden">
           
           {/* Header Section */}
-          <div className="flex flex-col gap-[20px] pl-[66px] pr-[40px]">
-            <div className="flex flex-col gap-[20px]">
+          <div className="flex flex-col gap-[20px] px-4 lg:pl-[66px] lg:pr-[40px]">
+            <div className="flex flex-col gap-2 lg:gap-[20px]">
               <h1>
                 SOBRE NÓS
               </h1>
@@ -102,7 +102,7 @@ const AboutUs = () => {
             </div>
             
             {/* CTA Button */}
-            <Button className="bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white font-bold px-8 py-3 rounded-md">
+            <Button size="md" className="w-full lg:w-[282px]">
               FALAR COM DAVI
             </Button>
           </div>
@@ -110,7 +110,7 @@ const AboutUs = () => {
           {/* Cards Container */}
           <div 
             ref={containerRef}
-            className="flex flex-row overflow-x-auto pl-[66px] pr-[40px] gap-8 cursor-grab active:cursor-grabbing scrollbar-hide"
+            className="flex flex-row overflow-x-auto px-4 lg:pl-[66px] lg:pr-[40px] gap-4 lg:gap-8 cursor-grab active:cursor-grabbing scrollbar-hide"
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseLeave}
@@ -128,13 +128,13 @@ const AboutUs = () => {
                 }}
               >
                 {/* Card container with gradient background and border */}
-                <div className="relative flex flex-col w-[440px] p-[20px] gap-[20px] border border-tertiary rounded-2xl backdrop-blur-sm hover:scale-105 transition-transform duration-300 overflow-hidden"
+                <div className="relative flex flex-col w-[280px] lg:w-[440px] p-[12px] lg:p-[20px] gap-4 lg:gap-[20px] border border-tertiary rounded-2xl backdrop-blur-sm hover:scale-105 transition-transform duration-300 overflow-hidden"
                      style={{
                        background: 'linear-gradient(155deg, rgba(255, 255, 255, 0.00) -2.13%, rgba(255, 255, 255, 0.15) 136.58%)'
                      }}>
                   
                   {/* Video thumbnail */}
-                  <div className="relative h-[484px] rounded-2xl overflow-hidden">
+                  <div className="relative h-[320px] lg:h-[484px] rounded-2xl overflow-hidden">
                     <img
                       src={`https://img.youtube.com/vi/${card.youtubeId}/maxresdefault.jpg`}
                       alt={card.title}
@@ -150,7 +150,7 @@ const AboutUs = () => {
                       <img
                         src={card.playIcon}
                         alt="Play video"
-                        className="w-[77px] h-[77px]"
+                        className="w-12 lg:w-[77px] h-12 lg:h-[77px]"
                       />
                       {/*
                       <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:bg-white/30 transition-colors duration-300">
@@ -160,17 +160,17 @@ const AboutUs = () => {
                   </div>
 
                   {/* Card info */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 lg:gap-4">
                     {/* Category icon */}
                     <img
                       src={card.logo}
                       alt="Category icon"
-                      className="w-[63px] h-[63px] rounded-xl"
+                      className="w-8 lg:w-[63px] h-8 lg:h-[63px] rounded-xl"
                     />
                     
                     {/* Text content */}
                     <div className="flex-1">
-                      <h3 className="text-white font-semibold text-lg leading-tight mb-1">
+                      <h3 className="text-white font-semibold text-base lg:text-lg leading-tight mb-1">
                         {card.title}
                       </h3>
                       <p className="text-white/80 text-sm font-medium">

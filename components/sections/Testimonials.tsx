@@ -1,12 +1,42 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef, MouseEvent } from 'react';
 import { Button } from '../ui/button';
 import { X } from 'lucide-react';
 
 const Testimonials = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    if (containerRef.current) {
+      setStartX(e.pageX - containerRef.current.offsetLeft);
+      setScrollLeft(containerRef.current.scrollLeft);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    if (containerRef.current) {
+      const x = e.pageX - containerRef.current.offsetLeft;
+      const walk = (x - startX) * 2;
+      containerRef.current.scrollLeft = scrollLeft - walk;
+    }
+  };
 
   // Video/podcast cards data with YouTube video IDs
   const cards = [
@@ -47,96 +77,93 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="relative py-24 text-white overflow-hidden">
-
-      {/* Background container */}
-      <div className="container mx-auto px-6 relative z-10">
+    <section className="relative flex flex-col items-center gap-8 py-[80px] text-white overflow-hidden select-none">
           
-          {/* Header Section */}
-          <div className="mb-12">
-            <div className="mb-8 text-center max-w-[958px] mx-auto">
-              <h1 className="text-white text-[56px] font-normal leading-[54px] mb-6">
-                depoimentos reais
-              </h1>
-              <p className="text-white text-[20px] font-normal leading-[24px] mb-12">
-                Pedimos para nossos clientes contarem em vídeos curtos a experiência em cada projeto. Dá uma olhada!
-              </p>
+      {/* Header Section */}
+      <div className="flex flex-col items-center w-full max-w-[958px] gap-6 lg:gap-8 px-4 lg:px-0">
+        <div className="flex flex-col gap-2 lg:gap-4">
+          <h1 className="text-white text-center">
+            depoimentos reais
+          </h1>
+          <p className="text-white text-center">
+            Pedimos para nossos clientes contarem em vídeos curtos a experiência em cada projeto. Dá uma olhada!
+          </p>
+        </div>
+        
+        {/* CTA Button */}
+        <Button size="md" className="w-full lg:w-[282px]">
+          FALAR COM DAVI
+        </Button>
+      </div>
+      {/* Cards Container */}
+      <div 
+        ref={containerRef}
+        className="flex flex-row justify-start overflow-x-auto px-4 lg:px-[20px] gap-4 lg:gap-[30px] cursor-grab active:cursor-grabbing scrollbar-hide w-full"
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {cards.map((card) => (
+          <div
+            key={card.id}
+            className="relative group cursor-pointer flex-shrink-0"
+            onClick={(e) => {
+              if (!isDragging) {
+                openVideoModal(card.youtubeId);
+              }
+            }}
+          >
+            {/* Card container with gradient background and border */}
+            <div className="relative flex flex-col w-[280px] lg:w-[440px] lg:h-[608px] p-[12px] lg:p-[20px] gap-4 lg:gap-[20px] border border-tertiary rounded-2xl backdrop-blur-sm hover:scale-105 transition-transform duration-300 overflow-hidden"
+                 style={{
+                   background: 'linear-gradient(155deg, rgba(255, 255, 255, 0.00) -2.13%, rgba(255, 255, 255, 0.15) 136.58%)'
+                 }}>
               
-              {/* CTA Button using the existing Button component */}
-              <Button size="md" className="w-[282px] h-[48px]">
-                FALAR COM DAVI
-              </Button>
-            </div>
-          </div>
-
-          {/* Cards Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1280px] mx-auto">
-            {cards.map((card) => (
-              <div
-                key={card.id}
-                className="relative group cursor-pointer"
-                onClick={() => openVideoModal(card.youtubeId)}
-              >
-                {/* Card container with gradient background and border */}
-                <div 
-                  className="relative rounded-[20px] overflow-hidden backdrop-blur-sm hover:scale-105 transition-transform duration-300 w-[440px] h-[608px]"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%)',
-                    border: '1px solid transparent',
-                    backgroundImage: `
-                      linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%),
-                      linear-gradient(135deg, rgba(224, 37, 206, 0.7) 0%, rgba(255, 255, 255, 0) 50.52%, rgba(189, 36, 230, 0.7) 100%)
-                    `,
-                    backgroundOrigin: 'border-box',
-                    backgroundClip: 'content-box, border-box'
+              {/* Video thumbnail */}
+              <div className="relative h-[320px] lg:h-[482px] rounded-2xl overflow-hidden">
+                <img
+                  src={`https://img.youtube.com/vi/${card.youtubeId}/maxresdefault.jpg`}
+                  alt={card.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to medium quality thumbnail if maxres fails
+                    e.currentTarget.src = `https://img.youtube.com/vi/${card.youtubeId}/hqdefault.jpg`;
                   }}
-                >
-                  
-                  {/* Video thumbnail */}
-                  <div className="relative h-[482px] rounded-[15px] overflow-hidden m-5 mb-0">
-                    <img
-                      src={`https://img.youtube.com/vi/${card.youtubeId}/maxresdefault.jpg`}
-                      alt={card.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // Fallback to medium quality thumbnail if maxres fails
-                        e.currentTarget.src = `https://img.youtube.com/vi/${card.youtubeId}/hqdefault.jpg`;
-                      }}
-                    />
-                    
-                    {/* Play button overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <img
-                        src={card.playIcon}
-                        alt="Play video"
-                        className="w-[77px] h-[77px]"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Card info */}
-                  <div className="p-5 flex items-center gap-4 h-[63px]">
-                    {/* Logo */}
-                    <img
-                      src={card.logo}
-                      alt="Logo"
-                      className="w-[63px] h-[63px] rounded-[10px]"
-                    />
-                    
-                    {/* Text content */}
-                    <div className="flex-1">
-                      <h3 className="text-white font-semibold text-[22px] leading-[33px] mb-1">
-                        {card.title}
-                      </h3>
-                      <p className="text-white text-[13px] font-medium leading-[19.5px]">
-                        {card.subtitle}
-                      </p>
-                    </div>
-                  </div>
+                />
+                
+                {/* Play button overlay */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <img
+                    src={card.playIcon}
+                    alt="Play video"
+                    className="w-12 lg:w-[77px] h-12 lg:h-[77px]"
+                  />
                 </div>
               </div>
-            ))}
+              {/* Card info */}
+              <div className="flex items-center gap-2 lg:gap-4">
+                {/* Logo */}
+                <img
+                  src={card.logo}
+                  alt="Logo"
+                  className="w-8 lg:w-[63px] h-8 lg:h-[63px] rounded-[10px]"
+                />
+                
+                {/* Text content */}
+                <div className="flex-1">
+                  <h3 className="text-white font-semibold text-base lg:text-[22px] leading-tight lg:leading-[33px] mb-1">
+                    {card.title}
+                  </h3>
+                  <p className="text-white text-sm lg:text-[13px] font-medium lg:leading-[19.5px]">
+                    {card.subtitle}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
+        ))}
       </div>
 
       {/* YouTube Video Modal */}

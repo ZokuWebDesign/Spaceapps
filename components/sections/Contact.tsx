@@ -154,37 +154,37 @@ const Contact = () => {
     }
   };
   return (
-    <section className="flex flex-col items-center max-w-7xl mx-auto px-14 pt-[100px] pb-[50px]">
+    <section className="flex flex-col items-center max-w-7xl mx-auto px-4 lg:px-14 pt-[100px] pb-[50px]">
 
         {/* Main content container with gradient background and border */}
         <div 
-          className="flex flex-col-reverse justify-start items-center gap-8 relative w-[998px] h-[560px] px-[80px] py-[28px] rounded-[6px] bg-gradient-to-br from-white/10 to-gray-500/20 border border-tertiary backdrop-blur-sm overflow-visible"
+          className="flex flex-col-reverse justify-start items-center gap-8 relative max-w-[998px] h-[580px] lg:h-[560px] px-4 lg:px-[80px] py-[28px] rounded-[6px] bg-gradient-to-br from-white/10 to-gray-500/20 border border-tertiary backdrop-blur-sm overflow-visible"
         >
           {/* Header Section */}
-          <div className="text-center mb-12">
+          <div className="text-center">
             {/* Logo */}
             <div className="flex justify-center -mb-6">
               <img 
                 src="/assets/logo/logo-big.svg" 
                 alt="Space Logo"
-                className="w-[390px] h-[390px] object-contain"
+                className="w-[224px] lg:w-[390px] h-[224px] lg:h-[390px] object-contain"
               />
             </div>
 
             {/* Title and Description */}
-            <div className="flex flex-col gap-4 mb-8">
-              <h1 className="text-white text-[56px] font-normal leading-[68px] tracking-[2.8px]">
+            <div className="flex flex-col max-w-[720px] gap-2 lg:gap-4 mb-8">
+              <h1 className="text-white lg:leading-[68px]">
                 Deixe seu Whatsapp
               </h1>
-              <p className="text-white text-[20px] font-medium leading-[24px] tracking-[1.6px]">
-                Não pode falar agora mas quer lembrar de tirar a sua ideia do papel? Deixe o seu Whatsapp e o melhor horário para o nosso time comercial entrar em contato!
+              <p className="text-white font-medium tracking-widest">
+                Não pode falar agora mas quer lembrar de tirar a sua ideia do papel?<br/>Deixe o seu Whatsapp e o melhor horário para o nosso time comercial entrar em contato!
               </p>
             </div>
 
             {/* Form Row */}
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-4 items-end">
               {/* WhatsApp Input */}
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 <div 
                   className={`h-[64px] rounded-[6px] px-3 flex items-center border ${
                     errors.whatsapp ? 'border-red-500' : 'border-[#f63e84]'
@@ -237,7 +237,7 @@ const Contact = () => {
                 type="submit" 
                 size="lg" 
                 disabled={isSubmitting}
-                className="min-w-[120px]"
+                className="w-full lg:max-w-[248px]"
               >
                 {isSubmitting ? "ENVIANDO..." : "ENVIAR"}
               </Button>
