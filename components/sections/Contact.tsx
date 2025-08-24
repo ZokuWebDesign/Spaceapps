@@ -179,9 +179,6 @@ const Contact = () => {
               <p className="text-white text-[20px] font-medium leading-[24px] tracking-[1.6px]">
                 Não pode falar agora mas quer lembrar de tirar a sua ideia do papel? Deixe o seu Whatsapp e o melhor horário para o nosso time comercial entrar em contato!
               </p>
-              <div className="text-white/70 text-[14px] font-normal">
-                💡 <strong>Formatos aceitos:</strong> +55 (11) 99999-9999, +1 555-123-4567, (11) 99999-9999
-              </div>
             </div>
 
             {/* Form Row */}
