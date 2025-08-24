@@ -1,28 +1,68 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+* {
+  font-family: 'Roboto', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
 
-@media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Impact', 'Signika', 'Roboto', 'Outfit', sans-serif;
+    --primary: linear-gradient(54deg, #DC0C6A 26.15%, #FF518E 82.62%);
+    --primary-solid: #DC0C6A; /* Fallback solid color for borders, etc. */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 276 86% 54%;
+    --secondary-foreground: 0 0% 9%;
+    --tertiary: 250 72% 59%;
+    --tertiary-foreground: 250 72% 59%;
+    
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 220 87% 51%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 8% 46%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 8% 46%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 8% 46%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 8% 46%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: 0 0% 4%;
+      --foreground: 0 0% 93%;
+
+      --primary: linear-gradient(54deg, #DC0C6A 26.15%, #FF518E 82.62%);
+      --primary-solid: #DC0C6A; /* Fallback solid color for borders, etc. */
+      --primary-foreground: 0 0% 98%;
+      --secondary: 276 86% 54%;
+      --secondary-foreground: 0 0% 9%;
+      --tertiary: 250 72% 59%;
+      --tertiary-foreground: 250 72% 59%;
+      
+      --border: 220 13% 18%;
+      --input: 220 13% 18%;
+      --ring: 220 87% 51%;
+      --muted: 220 14% 14%;
+      --muted-foreground: 220 8% 65%;
+      --accent: 220 14% 14%;
+      --accent-foreground: 220 8% 65%;
+      --destructive: 0 62% 30%;
+      --destructive-foreground: 0 0% 98%;
+      --popover: 0 0% 4%;
+      --popover-foreground: 220 8% 65%;
+      --card: 0 0% 4%;
+      --card-foreground: 220 8% 65%;
+    }
+  }
 }
 
 h1 {
@@ -30,6 +70,20 @@ h1 {
   font-weight: 400;
   font-size: 3.5rem;
   line-height: 53px;
+}
+
+h2 {
+  font-family: 'Signika', sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #1ee9e6, #26a8f6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 h3 {
@@ -54,36 +108,194 @@ p {
   line-height: 24px;
 }
 
-a {
-  font-family: 'Outfit', serif;
-  font-weight: 800;
-  font-size: 1.25rem;
-  line-height: 26.9px;
+@layer components {
+  /* Navigation Link Styles */
+  .nav-link {
+    font-family: 'Signika', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: white;
+    transition: color 0.2s ease-in-out;
+  }
+
+  .nav-link:hover {
+    color: #1ee9e6;
+  }
+
+  /* Mobile Navigation Link Styles */
+  .mobile-nav-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 53px;
+    padding: 0 1rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Signika', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .mobile-nav-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Custom Button Styles */
+  .btn-primary {
+    background: var(--primary);
+    color: hsl(var(--primary-foreground));
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    border: 2px solid var(--primary-solid);
+    background: transparent;
+    color: var(--primary-solid);
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-outline:hover {
+    background: var(--primary);
+    color: hsl(var(--primary-foreground));
+  }
+
+  .btn-secondary {
+    background: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-secondary:hover {
+    background: hsl(var(--secondary) / 0.8);
+  }
 }
 
-/* Mobile styles */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 2.5rem;
-    line-height: 120%
+/* Levitation Animations */
+@keyframes levitate {
+  0%, 100% {
+    transform: translateY(0px);
   }
-
-  h2 {
-    font-size: 1.125rem;
-    line-height: 120%
+  50% {
+    transform: translateY(-15px);
   }
+}
 
-  h6 {
-    line-height: 120%;
+@keyframes levitate-slow {
+  0%, 100% {
+    transform: translateY(0px);
   }
-
-  p {
-    font-size: 1.125rem;
-    line-height: 160%;
+  50% {
+    transform: translateY(-10px);
   }
+}
 
-  a {
-    font-size: 1rem;
-    line-height: 140%;
+/* Planet Animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes orbit-float {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  25% {
+    transform: translate(8px, -5px) rotate(90deg);
+  }
+  50% {
+    transform: translate(0px, -8px) rotate(180deg);
+  }
+  75% {
+    transform: translate(-8px, -5px) rotate(270deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(360deg);
+  }
+}
+
+/* Star Animations */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: translate(-100vw, 100vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(100vw, -100vh);
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .animate-levitate {
+    animation: levitate 3s ease-in-out infinite;
+  }
+  
+  .animate-levitate-slow {
+    animation: levitate-slow 4s ease-in-out infinite 1s;
+  }
+  
+  .animate-spin-slow {
+    animation: spin-slow 25s linear infinite;
+  }
+  
+  .animate-spin-reverse {
+    animation: spin-reverse 35s linear infinite 2s;
+  }
+  
+  .animate-orbit-float {
+    animation: orbit-float 18s ease-in-out infinite 1.5s;
+  }
+  
+  .animate-twinkle {
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  
+  .animate-shooting-star {
+    animation: shooting-star 8s linear infinite 3s;
   }
 }
