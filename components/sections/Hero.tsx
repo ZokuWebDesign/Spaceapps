@@ -4,55 +4,59 @@ import { Button } from "@/components/ui/button";
 const Hero = () => {
   return (
     <section id="inicio" className="relative min-h-screen overflow-hidden">
-      {/* Background Illustrations */}
-      {/* Shooting Star - Top left area */}
-      <img
-        src="/assets/vectors/shooting-star.svg"
-        alt="Shooting star"
-        className="absolute top-[10%] left-[-10%] w-[1200px] h-[740px] z-0 opacity-80 animate-shooting-star"
-      />
-      
-      {/* Stars scattered throughout */}
-      <img
-        src="/assets/vectors/stars.svg"
-        alt="Stars"
-        className="absolute top-[5%] left-[8%] w-[1100px] h-[850px] z-0 animate-twinkle"
-      />
-      
-      {/* Planet 1 - Small planet upper right */}
-      <img
-        src="/assets/vectors/planet-1.svg"
-        alt="Planet 1"
-        className="absolute top-[5%] right-[27%] w-[66px] h-[66px] z-10 animate-spin-slow"
-      />
-      
-      {/* Planet 2 - Medium planet upper left */}
-      <img
-        src="/assets/vectors/planet-2.svg"
-        alt="Planet 2"
-        className="absolute top-[23%] left-[5%] w-[164px] h-[164px] z-10 animate-orbit-float"
-      />
-      
-      {/* Planet 3 - Large planet upper right */}
-      <img
-        src="/assets/vectors/planet-3.svg"
-        alt="Planet 3"
-        className="absolute top-[18%] right-[1%] w-[300px] h-[300px] z-5 animate-spin-reverse"
-      />
-      
-      {/* Astronaut 1 - Bottom right */}
-      <img
-        src="/assets/vectors/astronaut-1.svg"
-        alt="Astronaut 1"
-        className="absolute bottom-[18%] right-[0%] w-[224px] h-[208px] z-30 animate-levitate"
-      />
-      
-      {/* Astronaut 2 - Bottom left */}
-      <img
-        src="/assets/vectors/astronaut-2.svg"
-        alt="Astronaut 2"
-        className="absolute bottom-[8%] left-[0%] w-[232px] h-[130px] z-10 animate-levitate-slow"
-      />
+      {/* Background Illustrations Container with Width Limit */}
+      <div className="absolute inset-0 flex justify-center">
+        <div className="relative w-full max-w-7xl h-full">
+          {/* Shooting Star - Top left area */}
+          <img
+            src="/assets/vectors/shooting-star.svg"
+            alt="Shooting star"
+            className="absolute top-[10%] left-[-10%] w-[1200px] h-[740px] z-0 animate-shooting-star"
+          />
+          
+          {/* Stars scattered throughout */}
+          <img
+            src="/assets/vectors/stars.svg"
+            alt="Stars"
+            className="absolute top-[5%] left-[8%] w-[1100px] h-[850px] z-0 animate-twinkle"
+          />
+          
+          {/* Planet 1 - Small planet upper right */}
+          <img
+            src="/assets/vectors/planet-1.svg"
+            alt="Planet 1"
+            className="absolute top-[5%] right-[27%] w-[66px] h-[66px] z-10 animate-spin-slow"
+          />
+          
+          {/* Planet 2 - Medium planet upper left */}
+          <img
+            src="/assets/vectors/planet-2.svg"
+            alt="Planet 2"
+            className="absolute top-[23%] left-[5%] w-[164px] h-[164px] z-10 animate-orbit-float"
+          />
+          
+          {/* Planet 3 - Large planet upper right */}
+          <img
+            src="/assets/vectors/planet-3.svg"
+            alt="Planet 3"
+            className="absolute top-[18%] right-[1%] w-[300px] h-[300px] z-5 animate-spin-reverse"
+          />
+          
+          {/* Astronaut 1 - Bottom right */}
+          <img
+            src="/assets/vectors/astronaut-1.svg"
+            alt="Astronaut 1"
+            className="absolute bottom-[18%] right-[0%] w-[224px] h-[208px] z-30 animate-levitate"
+          />
+          
+          {/* Astronaut 2 - Bottom left */}
+          <img
+            src="/assets/vectors/astronaut-2.svg"
+            alt="Astronaut 2"
+            className="absolute bottom-[8%] left-[0%] w-[232px] h-[130px] z-10 animate-levitate-slow"
+          />
+        </div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-14 relative z-20">
         <div className="flex flex-col items-center pt-[90px]">

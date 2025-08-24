@@ -2,7 +2,6 @@ import Header from "@/components/sections/Header";
 import Hero from "@/components/sections/Hero";
 import CrawlingBanner from "@/components/sections/CrawlingBanner";
 import FeatureImageOne from "@/components/sections/Companies";
-import FeaturesWithImage from "@/components/sections/FeaturesWithImage";
 import ComoFunciona from "@/components/sections/Mission";
 import FeatureImageTwo from "@/components/sections/Checklist";
 import CTA from "@/components/sections/Contact";
@@ -17,7 +16,6 @@ export default function Page() {
       <Hero />
       <CrawlingBanner />
       <FeatureImageOne />
-      <FeaturesWithImage />
       <ComoFunciona />
       <FeatureImageTwo />
       <CTA />
