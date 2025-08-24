@@ -7,7 +7,7 @@ export const metadata = {
   metadataBase: new URL('https://spaceapps.yoursite.com'),
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: 'pt_BR',
     url: 'https://spaceapps.yoursite.com',
     siteName: 'SpaceApps',
     title: 'Spaceapps - Space Innovation Challenge',

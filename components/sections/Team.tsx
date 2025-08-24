@@ -46,7 +46,7 @@ const teamMembers = [
 
 const Team = () => {
   return (
-    <section className="bg-black py-20">
+    <section className="py-20">
       <div className="max-w-[1280px] mx-auto px-4">
         {/* Header Section */}
         <div className="text-center mb-12">
@@ -71,16 +71,6 @@ const Team = () => {
             <div
               key={index}
               className="relative rounded-[6px] overflow-hidden backdrop-blur-sm w-[258px] h-[328px] mx-auto"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.21) 100%)',
-                border: '1px solid transparent',
-                backgroundImage: `
-                  linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.21) 100%),
-                  linear-gradient(135deg, rgba(224, 37, 206, 0.7) 0%, rgba(255, 255, 255, 0) 50.52%, rgba(189, 36, 230, 0.7) 100%)
-                `,
-                backgroundOrigin: 'border-box',
-                backgroundClip: 'content-box, border-box'
-              }}
             >
               {/* Member Image */}
               <div className="p-[18px] pb-0">
