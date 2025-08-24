@@ -117,11 +117,11 @@ app.post('/api/contact', async (req, res) => {
       });
     }
 
-    // Validate WhatsApp format
-    const whatsappRegex = /^\d{2}\s\d{4,5}-\d{4}$/;
-    if (!whatsappRegex.test(whatsapp.trim())) {
+    // Validate WhatsApp format (accepts international formats)
+    const digitsOnly = whatsapp.trim().replace(/\D/g, '');
+    if (digitsOnly.length < 10 || digitsOnly.length > 15) {
       return res.status(400).json({
-        error: 'Formato de WhatsApp inválido. Use: 00 00000-0000'
+        error: 'Número de WhatsApp inválido. Deve ter entre 10 e 15 dígitos.'
       });
     }
 
