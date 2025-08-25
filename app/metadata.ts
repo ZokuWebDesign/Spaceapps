@@ -1,30 +1,30 @@
 export const metadata = {
   title: {
-    template: '%s | Spaceapps',
-    default: 'Spaceapps - Space Innovation Challenge',
+    template: '%s | SpaceApps',
+    default: 'SpaceApps - Desenvolvemos seu software para alcançar o espaço',
   },
-  description: 'NASA Spaceapps Challenge - Innovating solutions for space exploration and Earth challenges.',
-  metadataBase: new URL('https://spaceapps.yoursite.com'),
+  description: 'Como um foguete: do protótipo ao lançamento. Desenvolvemos software seguindo um processo estruturado em fases claras e bem definidas. Projetos em 4 países.',
+  metadataBase: new URL('https://spaceapps.com.br'),
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: 'https://spaceapps.yoursite.com',
+    url: 'https://spaceapps.com.br',
     siteName: 'SpaceApps',
-    title: 'Spaceapps - Space Innovation Challenge',
-    description: 'NASA SpaceApps Challenge - Innovating solutions for space exploration and Earth challenges.',
+    title: 'SpaceApps - Desenvolvemos seu software para alcançar o espaço',
+    description: 'Como um foguete: do protótipo ao lançamento. Desenvolvemos software seguindo um processo estruturado em fases claras e bem definidas. Projetos em 4 países.',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SpaceApps',
+        alt: 'SpaceApps - Desenvolvimento de Software',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Spaceapps - Space Innovation Challenge',
-    description: 'NASA Spaceapps Challenge - Innovating solutions for space exploration and Earth challenges.',
+    title: 'SpaceApps - Desenvolvemos seu software para alcançar o espaço',
+    description: 'Como um foguete: do protótipo ao lançamento. Desenvolvemos software seguindo um processo estruturado em fases claras e bem definidas.',
     images: ['/og-image.jpg'],
   },
   robots: {
