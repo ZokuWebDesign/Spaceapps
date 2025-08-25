@@ -3,13 +3,18 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
+import { useTranslations } from '@/hooks/useTranslations';
+import { usePathname } from 'next/navigation';
 
 const Header = () => {
+  const t = useTranslations();
+  const pathname = usePathname();
   const isMobile = useIsMobile();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const languageRef = useRef<HTMLDivElement>(null);
+  const languageRefDesktop = useRef<HTMLDivElement>(null);
+  const languageRefMobile = useRef<HTMLDivElement>(null);
   const isVisible = useScrollDirection();
 
   useEffect(() => {
@@ -17,7 +22,11 @@ const Header = () => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMobileMenuOpen(false);
       }
-      if (languageRef.current && !languageRef.current.contains(event.target as Node)) {
+
+      const clickedInsideDesktop = languageRefDesktop.current && languageRefDesktop.current.contains(event.target as Node);
+      const clickedInsideMobile = languageRefMobile.current && languageRefMobile.current.contains(event.target as Node);
+
+      if (!clickedInsideDesktop && !clickedInsideMobile) {
         setIsLanguageDropdownOpen(false);
       }
     };
@@ -30,6 +39,13 @@ const Header = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isMobileMenuOpen, isLanguageDropdownOpen]);
+
+  // Get current language flag
+  const getCurrentLanguageFlag = () => {
+    if (pathname.startsWith('/en-us')) return "/assets/icons/US.svg";
+    if (pathname.startsWith('/es-ar')) return "/assets/icons/AR.svg";
+    return "/assets/icons/BR.svg"; // Default to Portuguese
+  };
 
   return (
     <>
@@ -58,38 +74,38 @@ const Header = () => {
             <div className="hidden lg:flex gap-[40px]">
               <nav className="flex items-center gap-6">
                 <a href="#inicio" className="nav-link">
-                  INICIO
+                  {t.header.navigation.home}
                 </a>
                 <a href="#quem-faz-parte" className="nav-link">
-                  QUEM FAZ PARTE
+                  {t.header.navigation.team}
                 </a>
                 <a href="#sobre-nos" className="nav-link">
-                  SOBRE NÓS
+                  {t.header.navigation.about}
                 </a>
                 <a href="#planejamento" className="nav-link">
-                  PLANEJAMENTO
+                  {t.header.navigation.planning}
                 </a>
                 <a href="#checklist" className="nav-link">
-                  CHECKLIST
+                  {t.header.navigation.checklist}
                 </a>
                 <a href="#depoimentos" className="nav-link">
-                  DEPOIMENTOS
+                  {t.header.navigation.testimonials}
                 </a>
                 <a href="#tripulacao" className="nav-link">
-                  TRIPULAÇÃO
+                  {t.header.navigation.crew}
                 </a>
                 <a href="#faqs" className="nav-link">
-                  FAQS
+                  {t.header.navigation.faqs}
                 </a>
               </nav>
 
               {/* Language Selector */}
-              <div className="relative" ref={languageRef}>
+              <div className="relative" ref={languageRefDesktop}>
                 <button
                   onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
                   className="w-6 h-6 flex items-center justify-center rounded-2xl border border-transparent hover:border-[#674DE2] transition-colors"
                 >
-                  <img src="/assets/icons/BR.svg" alt="Language Selector" className="w-6 h-6 object-contain" />
+                  <img src={getCurrentLanguageFlag()} alt="Language Selector" className="w-6 h-6 object-contain" />
                 </button>
 
                 {/* Language Dropdown */}
@@ -97,27 +113,27 @@ const Header = () => {
                   <div className="absolute top-full right-0 mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 min-w-[120px] z-50">
                     <a
                       href="/"
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium"
-                      onClick={() => setIsLanguageDropdownOpen(false)}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = '/'; }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium w-full text-left no-underline"
                     >
                       <img src="/assets/icons/BR.svg" alt="Português" className="w-4 h-4" />
-                      Português
+                      {t.header.language.portuguese}
                     </a>
                     <a
-                      href="/english"
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium"
-                      onClick={() => setIsLanguageDropdownOpen(false)}
+                      href="/en-us/"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = '/en-us/'; }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium w-full text-left no-underline"
                     >
                       <img src="/assets/icons/US.svg" alt="English" className="w-4 h-4" />
-                      English
+                      {t.header.language.english}
                     </a>
                     <a
-                      href="/espanol"
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium"
-                      onClick={() => setIsLanguageDropdownOpen(false)}
+                      href="/es-ar/"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = '/es-ar/'; }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium w-full text-left no-underline"
                     >
                       <img src="/assets/icons/AR.svg" alt="Español" className="w-4 h-4" />
-                      Español
+                      {t.header.language.spanish}
                     </a>
                   </div>
                 )}
@@ -134,18 +150,18 @@ const Header = () => {
                   href="https://all-price-copy.bubbleapps.io/cadastro"
                   className="w-full text-sm text-white font-bold font-['Outfit',sans-serif]"
                 >
-                  FALAR COM DAVI
+                  {t.header.cta}
                 </a>
               </Button>
               
 
               {/* Language Selector */}
-              <div className="relative" ref={languageRef}>
+              <div className="relative" ref={languageRefMobile}>
                 <button
                   onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
                   className="w-6 h-6 flex items-center justify-center rounded-2xl border border-transparent hover:border-[#674DE2] transition-colors"
                 >
-                  <img src="/assets/icons/BR.svg" alt="Language Selector" className="w-6 h-6 object-contain" />
+                  <img src={getCurrentLanguageFlag()} alt="Language Selector" className="w-6 h-6 object-contain" />
                 </button>
 
                 {/* Language Dropdown */}
@@ -153,27 +169,27 @@ const Header = () => {
                   <div className="absolute top-full right-0 mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 min-w-[120px] z-50">
                     <a
                       href="/"
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium"
-                      onClick={() => setIsLanguageDropdownOpen(false)}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = '/'; }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium w-full text-left no-underline"
                     >
                       <img src="/assets/icons/BR.svg" alt="Português" className="w-4 h-4" />
-                      Português
+                      {t.header.language.portuguese}
                     </a>
                     <a
-                      href="/english"
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium"
-                      onClick={() => setIsLanguageDropdownOpen(false)}
+                      href="/en-us/"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = '/en-us/'; }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium w-full text-left no-underline"
                     >
                       <img src="/assets/icons/US.svg" alt="English" className="w-4 h-4" />
-                      English
+                      {t.header.language.english}
                     </a>
                     <a
-                      href="/espanol"
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium"
-                      onClick={() => setIsLanguageDropdownOpen(false)}
+                      href="/es-ar/"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = '/es-ar/'; }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-['Roboto',sans-serif] font-medium w-full text-left no-underline"
                     >
                       <img src="/assets/icons/AR.svg" alt="Español" className="w-4 h-4" />
-                      Español
+                      {t.header.language.spanish}
                     </a>
                   </div>
                 )}
@@ -227,7 +243,7 @@ const Header = () => {
                     href="#inicio"
                     className="mobile-nav-link"
                   >
-                    Inicio
+                    {t.header.mobileNavigation.home}
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -236,7 +252,7 @@ const Header = () => {
                     href="#quem-faz-parte"
                     className="mobile-nav-link"
                   >
-                    Quem faz parte
+                    {t.header.mobileNavigation.team}
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -245,7 +261,7 @@ const Header = () => {
                     href="#sobre-nos" 
                     className="mobile-nav-link"
                   >
-                    Sobre nós
+                    {t.header.mobileNavigation.about}
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -254,7 +270,7 @@ const Header = () => {
                     href="#planejamento" 
                     className="mobile-nav-link"
                   >
-                    Planejamento
+                    {t.header.mobileNavigation.planning}
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -263,7 +279,7 @@ const Header = () => {
                     href="#checklist" 
                     className="mobile-nav-link"
                   >
-                    Checklist
+                    {t.header.mobileNavigation.checklist}
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -272,7 +288,7 @@ const Header = () => {
                     href="#depoimentos" 
                     className="mobile-nav-link"
                   >
-                    Depoimentos
+                    {t.header.mobileNavigation.testimonials}
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -281,7 +297,7 @@ const Header = () => {
                     href="#tripulacao" 
                     className="mobile-nav-link"
                   >
-                    Tripulação
+                    {t.header.mobileNavigation.crew}
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -290,7 +306,7 @@ const Header = () => {
                     href="#faqs" 
                     className="mobile-nav-link"
                   >
-                    FAQs
+                    {t.header.mobileNavigation.faqs}
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -303,11 +319,11 @@ const Header = () => {
                         <img src="/assets/icons/BR.svg" alt="Português" className="w-5 h-5" />
                         Português
                       </a>
-                      <a href="/english" className="flex items-center gap-3 px-4 py-2 text-white hover:bg-white/10 rounded-lg transition-colors font-['Roboto',sans-serif] font-medium">
+                      <a href="/en-us" className="flex items-center gap-3 px-4 py-2 text-white hover:bg-white/10 rounded-lg transition-colors font-['Roboto',sans-serif] font-medium">
                         <img src="/assets/icons/US.svg" alt="English" className="w-5 h-5" />
                         English
                       </a>
-                      <a href="/espanol" className="flex items-center gap-3 px-4 py-2 text-white hover:bg-white/10 rounded-lg transition-colors font-['Roboto',sans-serif] font-medium">
+                      <a href="/es-ar" className="flex items-center gap-3 px-4 py-2 text-white hover:bg-white/10 rounded-lg transition-colors font-['Roboto',sans-serif] font-medium">
                         <img src="/assets/icons/AR.svg" alt="Español" className="w-5 h-5" />
                         Español
                       </a>

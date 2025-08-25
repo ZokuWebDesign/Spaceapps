@@ -3,8 +3,10 @@
 import React, { useState, useRef, MouseEvent } from 'react';
 import { Button } from '../ui/button';
 import { X } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const AboutUs = () => {
+  const t = useTranslations();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -42,24 +44,24 @@ const AboutUs = () => {
   const cards = [
     {
       id: 1,
-      title: "COMO A SPACE NASCEU",
-      subtitle: "PODCAST SEM CODAR",
+      title: t.aboutUs.cards.card1.title,
+      subtitle: t.aboutUs.cards.card1.subtitle,
       playIcon: "/assets/icons/play-icon.svg",
       logo: "/assets/logo/space-profile.svg",
       youtubeId: "dQw4w9WgXcQ" // Replace with actual YouTube video ID
     },
     {
       id: 2,
-      title: "DAMOS UM JEITO",
-      subtitle: "PODCAST SEM CODAR",
+      title: t.aboutUs.cards.card2.title,
+      subtitle: t.aboutUs.cards.card2.subtitle,
       playIcon: "/assets/icons/play-icon.svg",
       logo: "/assets/logo/space-profile.svg",
       youtubeId: "jNQXAC9IVRw" // Replace with actual YouTube video ID
     },
     {
       id: 3,
-      title: "COMO A SPACE NASCEU",
-      subtitle: "PODCAST SEM CODAR",
+      title: t.aboutUs.cards.card3.title,
+      subtitle: t.aboutUs.cards.card3.subtitle,
       playIcon: "/assets/icons/play-icon.svg",
       logo: "/assets/logo/space-profile.svg",
       youtubeId: "L_jWHffIx5E" // Replace with actual YouTube video ID
@@ -94,16 +96,16 @@ const AboutUs = () => {
           <div className="flex flex-col gap-[20px] px-4 lg:pl-[66px] lg:pr-[40px]">
             <div className="flex flex-col gap-2 lg:gap-[20px]">
               <h1>
-                SOBRE NÓS
+                {t.aboutUs.title}
               </h1>
               <p className="text-white">
-                Conheça nossa história, como pensamos e como trabalhamos através de vídeos rápidos sobre a Space!
+                {t.aboutUs.description}
               </p>
             </div>
             
             {/* CTA Button */}
             <Button size="md" className="w-full lg:w-[282px]">
-              FALAR COM DAVI
+              {t.aboutUs.cta}
             </Button>
           </div>
 

@@ -3,8 +3,10 @@
 import React, { useState, useRef, MouseEvent } from 'react';
 import { Button } from '../ui/button';
 import { X } from 'lucide-react';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Testimonials = () => {
+  const t = useTranslations();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -83,22 +85,22 @@ const Testimonials = () => {
       <div className="flex flex-col items-center w-full max-w-[958px] gap-6 lg:gap-8 px-4 lg:px-0">
         <div className="flex flex-col gap-2 lg:gap-4">
           <h1 className="text-white text-center">
-            depoimentos reais
+            {t.testimonials.title}
           </h1>
           <p className="text-white text-center">
-            Pedimos para nossos clientes contarem em vídeos curtos a experiência em cada projeto. Dá uma olhada!
+            {t.testimonials.description}
           </p>
         </div>
         
         {/* CTA Button */}
         <Button size="md" className="w-full lg:w-[282px]">
-          FALAR COM DAVI
+          {t.testimonials.cta}
         </Button>
       </div>
       {/* Cards Container */}
       <div 
         ref={containerRef}
-        className="flex flex-row justify-start overflow-x-auto px-4 lg:px-[20px] gap-4 lg:gap-[30px] cursor-grab active:cursor-grabbing scrollbar-hide w-full"
+        className="flex flex-row justify-start overflow-x-auto max-w-7xl px-4 lg:px-[20px] gap-4 lg:gap-[30px] cursor-grab active:cursor-grabbing scrollbar-hide w-full"
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}

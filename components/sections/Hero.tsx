@@ -1,7 +1,11 @@
 
+"use client";
+
 import { Button } from "@/components/ui/button";
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Hero = () => {
+  const t = useTranslations();
   return (
     <section id="inicio" className="relative min-h-screen overflow-hidden">
       {/* Background Illustrations Container with Width Limit */}
@@ -69,26 +73,27 @@ const Hero = () => {
                 src="/assets/icons/globe.svg"
                 alt="globo"
               />
-              <span className="text-xs font-semibold text-white font-['Signika',sans-serif]">Projetos em 4 países</span>
+              <span className="text-xs font-semibold text-white font-['Signika',sans-serif]">{t.hero.tag}</span>
             </div>
 
             {/* Gradient subtitle */}
             <h2>
-              Como um foguete: do protótipo ao lançamento
+              {t.hero.subtitle}
             </h2>
             
             {/* Main title */}
-            <h1 className="text-white text-center text-transform: uppercase">
-              Desenvolvemos seu software<br />para alcançar o espaço
-            </h1>
+            <h1 
+              className="text-white text-center text-transform: uppercase"
+              dangerouslySetInnerHTML={{ __html: t.hero.title }}
+            />
 
             {/* Description */}
             <div className="max-w-[644px] mx-auto space-y-6">
               <p className="text-white text-center">
-                Cada etapa é como um componente de um foguete sendo cuidadosamente montado para a decolagem.
+                {t.hero.description1}
               </p>
               <p className="text-white text-center">
-                Do entendimento inicial à entrega final, seguimos um processo estruturado em fases claras e bem definidas.
+                {t.hero.description2}
               </p>
             </div>
           </div>
@@ -98,7 +103,7 @@ const Hero = () => {
             size="base"
             className="w-full lg:w-[282px] mb-12 text-[20px] font-extrabold"
           >
-            FALAR COM O DAVI
+            {t.hero.cta}
           </Button>
 
           {/* Dashboard Preview */}

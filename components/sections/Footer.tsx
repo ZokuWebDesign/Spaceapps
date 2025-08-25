@@ -1,6 +1,9 @@
 "use client";
 
+import { useTranslations } from '@/hooks/useTranslations';
+
 const Footer = () => {
+  const t = useTranslations();
   return (
     <footer className="relative">
       {/* Background with glassmorphism */}
@@ -26,8 +29,7 @@ const Footer = () => {
                   />
                 </div>
                 <p className="max-w-md text-white/80 text-base leading-relaxed">
-                  A maior plataforma de exploração espacial. Criações únicas e autênticas 
-                  para descobertas espaciais. Possibilitado pela tecnologia blockchain.
+                  {t.footer.description}
                 </p>
               </div>
               <div className="flex flex-row gap-4">
@@ -55,83 +57,83 @@ const Footer = () => {
 
               {/* Navigation Links */}
               <div className="space-y-6">
-                <h3 className="text-xl font-bold text-white mb-4">Mapa</h3>
+                <h3 className="text-xl font-bold text-white mb-4">{t.footer.navigation.title}</h3>
                 <ul className="space-y-4">
                   <li>
                     <a href="#inicio" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                      Início
+                      {t.footer.navigation.home}
                     </a>
                   </li>
                   <li>
                     <a href="#sobre" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                      Sobre nós
+                      {t.footer.navigation.about}
                     </a>
                   </li>
                   <li>
                     <a href="#planejamento" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                      Planejamento
+                      {t.footer.navigation.planning}
                     </a>
                   </li>
                   <li>
                     <a href="#checklist" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                      Checklist
+                      {t.footer.navigation.checklist}
                     </a>
                   </li>
                   <li>
                     <a href="#montagem" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                      Montagem
+                      {t.footer.navigation.assembly}
                     </a>
                   </li>
                   <li>
                     <a href="#equipe" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                      Quem faz parte
+                      {t.footer.navigation.team}
                     </a>
                   </li>
                   <li>
                     <a href="#depoimentos" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                      Depoimentos
+                      {t.footer.navigation.testimonials}
                     </a>
                   </li>
                   <li>
                     <a href="#tripulacao" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                      Tripulação
+                      {t.footer.navigation.crew}
                     </a>
                   </li>
                   <li>
                     <a href="#faq" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                      FAQ
+                      {t.footer.navigation.faq}
                     </a>
                   </li>
                 </ul>
               </div>
               {/* Social Links */}
               <div className="space-y-6">
-                <h3 className="text-xl font-bold text-white mb-4">Social</h3>
+                <h3 className="text-xl font-bold text-white mb-4">{t.footer.social.title}</h3>
                 <div className="space-y-4">
                   <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                    Instagram
+                    {t.footer.social.instagram}
                   </a>
                   <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                    Linkedin
+                    {t.footer.social.linkedin}
                   </a>
                   <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                    Youtube
+                    {t.footer.social.youtube}
                   </a>
                   <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                    Tiktok
+                    {t.footer.social.tiktok}
                   </a>
                 </div>
               </div>
 
               {/* Legal Links */}
               <div className="space-y-6">
-                <h3 className="text-xl font-bold text-white mb-4">Legal</h3>
+                <h3 className="text-xl font-bold text-white mb-4">{t.footer.legal.title}</h3>
                 <div className="space-y-4">
                   <a href="/termos" className="block text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                    Termos de uso
+                    {t.footer.legal.terms}
                   </a>
                   <a href="/politica" className="block text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                    Privacidade
+                    {t.footer.legal.privacy}
                   </a>
                 </div>
               </div>
@@ -141,7 +143,7 @@ const Footer = () => {
           {/* Bottom copyright */}
           <div className="pt-[14px]">
             <p className="text-xl text-white/80 font-medium">
-              2025 © SpaceApps. Direitos reservados
+              {t.footer.copyright}
             </p>
           </div>
       </div>

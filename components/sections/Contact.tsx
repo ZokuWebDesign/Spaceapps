@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from '@/hooks/useTranslations';
 
 // Helper function to format WhatsApp number
 const formatWhatsApp = (value: string) => {
@@ -61,28 +62,30 @@ const formatWhatsApp = (value: string) => {
   return formatted;
 };
 
-// Form validation schema
-const contactSchema = z.object({
-  whatsapp: z
-    .string()
-    .min(1, "WhatsApp é obrigatório")
-    .refine((value) => {
-      const digitsOnly = value.replace(/\D/g, '');
-      return digitsOnly.length >= 10; // At least 10 digits for a valid phone
-    }, "Número de WhatsApp deve ter pelo menos 10 dígitos")
-    .refine((value) => {
-      const digitsOnly = value.replace(/\D/g, '');
-      return digitsOnly.length <= 15; // Max 15 digits (international standard)
-    }, "Número muito longo"),
-  preferredTime: z
-    .string()
-    .min(1, "Horário preferido é obrigatório")
-    .max(10, "Horário muito longo"),
-});
-
-type ContactFormData = z.infer<typeof contactSchema>;
-
 const Contact = () => {
+  const t = useTranslations();
+  
+  // Form validation schema
+  const contactSchema = z.object({
+    whatsapp: z
+      .string()
+      .min(1, t.contact.form.validation.whatsappRequired)
+      .refine((value) => {
+        const digitsOnly = value.replace(/\D/g, '');
+        return digitsOnly.length >= 10; // At least 10 digits for a valid phone
+      }, t.contact.form.validation.whatsappMinLength)
+      .refine((value) => {
+        const digitsOnly = value.replace(/\D/g, '');
+        return digitsOnly.length <= 15; // Max 15 digits (international standard)
+      }, t.contact.form.validation.whatsappMaxLength),
+    preferredTime: z
+      .string()
+      .min(1, t.contact.form.validation.timeRequired)
+      .max(10, t.contact.form.validation.timeMaxLength),
+  });
+
+  type ContactFormData = z.infer<typeof contactSchema>;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [whatsappValue, setWhatsappValue] = useState("");
   const { toast } = useToast();
@@ -132,21 +135,21 @@ const Contact = () => {
 
       if (response.ok) {
         toast({
-          title: "Sucesso! 🎉",
-          description: result.message,
+          title: t.contact.form.success.title,
+          description: result.message || t.contact.form.success.message,
         });
         resetForm(); // Clear form and state
       } else {
         toast({
-          title: "Erro",
-          description: result.error || "Erro ao enviar formulário",
+          title: t.contact.form.error.title,
+          description: result.error || t.contact.form.error.genericMessage,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Erro",
-        description: "Erro de conexão. Verifique sua internet e tente novamente.",
+        title: t.contact.form.error.title,
+        description: t.contact.form.error.connectionMessage,
         variant: "destructive",
       });
     } finally {
@@ -174,11 +177,12 @@ const Contact = () => {
             {/* Title and Description */}
             <div className="flex flex-col max-w-[720px] gap-2 lg:gap-4 mb-8">
               <h1 className="text-white lg:leading-[68px]">
-                Deixe seu Whatsapp
+                {t.contact.title}
               </h1>
-              <p className="text-white font-medium tracking-widest">
-                Não pode falar agora mas quer lembrar de tirar a sua ideia do papel?<br/>Deixe o seu Whatsapp e o melhor horário para o nosso time comercial entrar em contato!
-              </p>
+              <p 
+                className="text-white font-medium tracking-widest"
+                dangerouslySetInnerHTML={{ __html: t.contact.description }}
+              />
             </div>
 
             {/* Form Row */}
@@ -196,7 +200,7 @@ const Contact = () => {
                   <input
                     {...register("whatsapp")}
                     type="tel"
-                    placeholder="+55 (11) 99999-9999"
+                    placeholder={t.contact.form.whatsappPlaceholder}
                     value={whatsappValue}
                     onChange={handleWhatsAppChange}
                     className="w-full bg-transparent text-white text-[20px] placeholder-white outline-none"
@@ -222,7 +226,7 @@ const Contact = () => {
                   <input
                     {...register("preferredTime")}
                     type="text"
-                    placeholder="Ex.: 17h"
+                    placeholder={t.contact.form.timePlaceholder}
                     className="w-full bg-transparent text-white text-[20px] placeholder-white outline-none"
                     disabled={isSubmitting}
                   />
@@ -239,7 +243,7 @@ const Contact = () => {
                 disabled={isSubmitting}
                 className="w-full lg:max-w-[248px]"
               >
-                {isSubmitting ? "ENVIANDO..." : "ENVIAR"}
+                {isSubmitting ? t.contact.form.submittingButton : t.contact.form.submitButton}
               </Button>
             </form>
           </div>

@@ -1,30 +1,32 @@
 "use client";
 import { useEffect, useRef, useState, MouseEvent } from "react";
-
-const checklistPhases = [
-  {
-    phase: "Fase 1: Pré-lançamento",
-    subtitle: "Preparação da missão",
-    description: 'Onde tudo começa: entender o contexto, montar a tripulação e traçar a rota.\n\n1. Entender o problema →\n🧩 "Identificar o asteroide: o que precisa ser resolvido?"\n\n2. Descobrir como resolver →\n🧭 "Planejar a rota da missão: qual o melhor caminho?"\n\n3. Fazer pesquisas e descobertas →\n🔍 "Explorar o terreno: o que já existe no universo?"\n\n4. Reunir o time para definir rota →\n👩‍🚀 "Montar a tripulação e alinhar o plano de voo"'
-  },
-  {
-    phase: "Fase 2: Design da Nave",
-    subtitle: "Construção da solução",
-    description: "Hora de esboçar, desenhar e garantir que a nave está pronta pra voar.\n\n1. Desenhar as telas do sistema →\n💻 Projetar o painel de controle da nave (UI/UX).\n\n2. Fazer o entendimento técnico →\n🧰 Verificar se os motores funcionam: viabilidade e arquitetura.\n\n3. Organizar o cronograma →\n🕓 Montar o cronograma da missão: cada etapa tem seu tempo."
-  },
-  {
-    phase: "Fase 3: Testes de solo",
-    subtitle: "Validação antes da decolagem",
-    description: 'Antes de apertar o botão vermelho, precisamos garantir que tudo está seguro e funcional.\n\n1. Testar no mundo real →\n🌍 "Simular a decolagem: testar com usuários reais.\n\n2. Documentar →\n📒 "Registrar o diário de bordo: garantir que todos saibam como navegar.'
-  },
-  {
-    phase: "Fase 4: Lançamento",
-    subtitle: "Desenvolvimento e monitoramento",
-    description: "Contagem regressiva iniciada. Hora de levantar voo!\n\n1. Iniciar desenvolvimento →\n🕓 Acionar os motores principais e levantar voo!\n\n2. Fazer reuniões regulares →\n📡 Check-ins com a base: manter a missão sob controle.\n\n3. Entregar e iniciar suporte →\n🛬 Pousar com sucesso e manter o sistema operacional no espaço!"
-  }
-];
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Checklist = () => {
+  const t = useTranslations();
+  
+  const checklistPhases = [
+    {
+      phase: t.checklist.phases.phase1.title,
+      subtitle: t.checklist.phases.phase1.subtitle,
+      description: t.checklist.phases.phase1.description
+    },
+    {
+      phase: t.checklist.phases.phase2.title,
+      subtitle: t.checklist.phases.phase2.subtitle,
+      description: t.checklist.phases.phase2.description
+    },
+    {
+      phase: t.checklist.phases.phase3.title,
+      subtitle: t.checklist.phases.phase3.subtitle,
+      description: t.checklist.phases.phase3.description
+    },
+    {
+      phase: t.checklist.phases.phase4.title,
+      subtitle: t.checklist.phases.phase4.subtitle,
+      description: t.checklist.phases.phase4.description
+    }
+  ];
   const [visibleCards, setVisibleCards] = useState<boolean[]>(new Array(checklistPhases.length).fill(false));
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const sectionRef = useRef<HTMLElement>(null);
@@ -96,10 +98,10 @@ const Checklist = () => {
         {/* Title Section */}
         <div className="flex flex-col text-center gap-6 max-w-[898px] mx-auto px-4 lg:px-0">
           <h1 className="text-white">
-            Checklist da decolagem
+            {t.checklist.title}
           </h1>
           <p className="text-white text-[20px] font-normal leading-[24px]">
-            Temos processos testados e comprovamos em mais de 50 projetos. E o melhor: você vai acompanhar tudo de forma simples e prática durante todo o desenvolvimento
+            {t.checklist.description}
           </p>
         </div>
 

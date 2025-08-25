@@ -2,8 +2,10 @@
 
 import React from 'react';
 import { Button } from '../ui/button';
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Companies = () => {
+  const t = useTranslations();
   // Company logos data with image sources
   const companies = [
     { logo: "https://i.ibb.co/Gf2LBBgy/unimed.webp", alt: "Unimed Logo" },
@@ -49,16 +51,16 @@ const Companies = () => {
         {/* Header */}
         <div className="text-center mb-16 max-w-4xl mx-auto">
           <h1 className="mb-6 tracking-wider text-transform: uppercase text-white">
-            Quem já fez essa viagem
+            {t.companies.title}
           </h1>
-          <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-            Todas essas empresas já embarcaram na nossa nave e fizeram uma viagem pelo<br />
-            universo do desenvolvimento. Vai ficar de fora?
-          </p>
+          <p 
+            className="text-xl text-gray-300 mb-8 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: t.companies.description }}
+          />
           
           {/* CTA Buttons */}
           <Button size="md" className="w-full lg:w-[282px]">
-            FALAR COM DAVI
+            {t.companies.cta}
           </Button>
         </div>
 
@@ -85,7 +87,7 @@ const Companies = () => {
         {/* Bottom spacing for visual balance */}
         <div className="pt-16 text-center">
           <p className="text-gray-400 text-base">
-            Junte-se a essas empresas incríveis em nossa jornada pelo espaço digital
+            {t.companies.bottomText}
           </p>
         </div>
       </div>

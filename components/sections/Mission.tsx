@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from '@/hooks/useTranslations';
 
 const Mission = () => {
+  const t = useTranslations();
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -42,11 +44,10 @@ const Mission = () => {
           }`}
         >
           <h1 className="text-white">
-            Planejamento da missão
+            {t.mission.title}
           </h1>
           <p className="text-white">
-            Descobertas, entrevistas com usuários reais, discussões entre o time e você, 
-            documentação com organização e escolha de plataformas que serão usadas no desenvolvimento
+            {t.mission.description}
           </p>
         </div>
 

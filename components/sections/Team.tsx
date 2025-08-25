@@ -2,6 +2,7 @@
 import { link } from "fs";
 import { useRef, useState, MouseEvent } from "react";
 import { Button } from "../ui/button";
+import { useTranslations } from '@/hooks/useTranslations';
 
 const teamMembers = [
   {
@@ -55,6 +56,7 @@ const teamMembers = [
 ];
 
 const Team = () => {
+  const t = useTranslations();
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -88,28 +90,28 @@ const Team = () => {
 
   return (
     <section className="pt-[50px] pb-[97px]">
-      <div className="flex flex-col gap-6 lg:gap-8 max-w-[1280px] mx-auto px-4">
+      <div className="flex flex-col gap-6 lg:gap-8 max-w-[1280px] mx-auto">
         {/* Header Section */}
-        <div className="flex flex-col gap-6 lg:gap-8 text-center max-w-[868px] mx-auto">
+        <div className="flex flex-col gap-6 lg:gap-8 text-center max-w-[868px] mx-auto px-4">
           <div className="flex flex-col gap-2 lg:gap-4">
             <h1 className="text-white">
-              Nossa tripulação
+              {t.team.title}
             </h1>
             <p className="text-white">
-              Nós temos os melhores profissionais do mercado para cuidar do seu projeto de ponta a ponta com organização e processos. Queremos ser o seu CTO parceiro!
+              {t.team.description}
             </p>
           </div>
           
           {/* CTA Button */}
           <Button size="md" className="w-full lg:w-[282px]">
-            QUERO FAZER PARTE
+            {t.team.cta}
           </Button>
         </div>
 
         {/* Team Cards Auto-Wrap Layout */}
         <div 
           ref={containerRef}
-          className="flex flex-row justify-start lg:justify-center overflow-x-auto md:flex-wrap md:overflow-x-visible gap-4 max-w-[1168px] mx-auto md:cursor-default cursor-grab active:cursor-grabbing scrollbar-hide select-none"
+          className="flex flex-row justify-start lg:justify-center md:flex-wrap overflow-x-auto md:overflow-x-visible gap-4 px-4 w-full max-w-[1168px] mx-auto md:cursor-default cursor-grab active:cursor-grabbing scrollbar-hide select-none"
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}

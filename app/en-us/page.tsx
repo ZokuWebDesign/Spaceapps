@@ -1,10 +1,11 @@
 import Header from "@/components/sections/Header";
 import Hero from "@/components/sections/Hero";
 import CrawlingBanner from "@/components/sections/CrawlingBanner";
-import FeatureImageOne from "@/components/sections/Companies";
+import Companies from "@/components/sections/Companies";
+import AboutUs from "@/components/sections/AboutUs";
 import ComoFunciona from "@/components/sections/Mission";
 import FeatureImageTwo from "@/components/sections/Checklist";
-import CTA from "@/components/sections/Contact";
+import Contact from "@/components/sections/Contact";
 import Testimonials from "@/components/sections/Testimonials";
 import FAQ from "@/components/sections/Team";
 import Footer from "@/components/sections/Footer";
@@ -15,10 +16,11 @@ export default function Page() {
       <Header />
       <Hero />
       <CrawlingBanner />
-      <FeatureImageOne />
+      <Companies />
+      <AboutUs />
       <ComoFunciona />
       <FeatureImageTwo />
-      <CTA />
+      <Contact />
       <Testimonials />
       <FAQ />
       <Footer />
