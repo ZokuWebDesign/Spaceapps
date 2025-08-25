@@ -1,4 +1,4 @@
-# SpaceApps �
+# SpaceApps 🚀
 
 Welcome to **SpaceApps – We develop your software to reach space**, a software development company that follows a structured process from prototype to launch. Like a rocket: from prototype to launch, we develop software following a structured process in clear and well-defined phases. Projects in 4 countries.
 
