@@ -13,21 +13,21 @@ export const AUTH_LINKS = {
 
 // Social Media Links
 export const SOCIAL_LINKS = {
-  FACEBOOK: 'https://www.facebook.com/people/upos',
-  INSTAGRAM: 'https://instagram.com/upos',
-  LINKEDIN: 'https://linkedin.com/company/upos',
-  YOUTUBE: 'https://youtube.com/@upos',
-  TIKTOK: 'https://tiktok.com/@upos8',
-  X: 'https://x.com/upos',
-  MAIL: 'mailto:suporte@upos.com.br',
+  FACEBOOK: 'https://www.facebook.com/people/spaceapps',
+  INSTAGRAM: 'https://instagram.com/spaceapps',
+  LINKEDIN: 'https://linkedin.com/company/spaceapps',
+  YOUTUBE: 'https://youtube.com/@spaceapps',
+  TIKTOK: 'https://tiktok.com/@spaceapps',
+  X: 'https://x.com/spaceapps',
+  MAIL: 'mailto:suporte@spaceapps.com.br',
   NUMBER: 'tel:+55',
   LOCAL: '#'
 } as const;
 
 // App Store Links
 export const STORE_LINKS = {
-  GOOGLE_PLAY: 'https://play.google.com/store/apps/details?id=upos',
-  APP_STORE: 'https://apps.apple.com/app/upos'
+  GOOGLE_PLAY: 'https://play.google.com/store/apps/details?id=spaceapps',
+  APP_STORE: 'https://apps.apple.com/app/spaceapps'
 } as const;
 
 // Page Links
