@@ -8,26 +8,26 @@ const teamMembers = [
   {
     name: "Davi Mendes",
     position: "CEO",
-    image: "https://i.ibb.co/nqvqWCFP/juan.webp",
-    linkedin: "https://www.linkedin.com/in/davimendes/"
+    image: "https://i.ibb.co/Y4KGhF3C/davi.webp",
+    linkedin: "https://www.linkedin.com/in/davi-mendes-36888323b/"
   },
   {
     name: "Gabriel Lennon",
     position: "CTO",
-    image: "https://i.ibb.co/nqvqWCFP/juan.webp",
-    linkedin: "https://www.linkedin.com/in/davimendes/"
+    image: "https://i.ibb.co/Q7HgBQjk/gabriel.webp",
+    linkedin: "https://www.linkedin.com/in/gabriel-lenon-802026217/"
   },
   {
     name: "José Thiago C. Araújo",
     position: "PM/SM",
-    image: "https://i.ibb.co/nqvqWCFP/juan.webp",
-    linkedin: "https://www.linkedin.com/in/davimendes/"
+    image: "https://i.ibb.co/845XKNcS/thiago.webp",
+    linkedin: "https://www.linkedin.com/in/josethiagoreal/"
   },
   {
     name: "Eliezer Ordonez",
     position: "DEV Bubble",
-    image: "https://i.ibb.co/nqvqWCFP/juan.webp",
-    linkedin: "https://www.linkedin.com/in/davimendes/"
+    image: "https://i.ibb.co/vGs0Nd5/eliezer.webp",
+    linkedin: "https://www.linkedin.com/in/eliezer-ordonez/"
   },
   {
     name: "Juan Pablo",
@@ -36,22 +36,22 @@ const teamMembers = [
     linkedin: "https://www.linkedin.com/in/jaypy06/"
   },
   {
-    name: "Edivan Oliveira",
-    position: "DEV Bubble",
-    image: "https://i.ibb.co/nqvqWCFP/juan.webp",
-    linkedin: "https://www.linkedin.com/in/davimendes/"
-  },
-  {
     name: "Frank William",
     position: "DEV Bubble",
-    image: "https://i.ibb.co/nqvqWCFP/juan.webp",
-    linkedin: "https://www.linkedin.com/in/davimendes/"
+    image: "https://i.ibb.co/MDmV1dHw/frank.webp",
+    linkedin: "https://www.linkedin.com/in/frankwilliam/"
+  },
+  {
+    name: "David Ferreira",
+    position: "DEV Full Stack",
+    image: "https://i.ibb.co/k20vN0zT/david.webp",
+    linkedin: "https://www.linkedin.com/in/davidferreiraspace/"
   },
   {
     name: "João",
-    position: "DEV Fullstack",
-    image: "https://i.ibb.co/nqvqWCFP/juan.webp",
-    linkedin: "https://www.linkedin.com/in/davimendes/"
+    position: "DEV Full Stack",
+    image: "https://i.ibb.co/N2Yj9zJ9/placeholder.webp",
+    linkedin: "https://www.linkedin.com/in/joaospace/"
   }
 ];
 
