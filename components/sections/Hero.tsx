@@ -2,6 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { WHATSAPP_LINKS } from "@/constants/links";
 import { useTranslations } from '@/hooks/useTranslations';
 
 const Hero = () => {
@@ -101,13 +102,21 @@ const Hero = () => {
           {/* CTA Button */}
           <Button 
             size="base"
-            className="w-full lg:w-[282px] mb-12 text-[20px] font-extrabold"
+            className="w-full lg:w-[282px] text-[20px] font-extrabold"
+            variant="primary"
           >
-            {t.hero.cta}
+            <a
+              href={WHATSAPP_LINKS.CONTACT}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-full flex items-center justify-center"
+            >
+              {t.hero.cta}
+            </a>
           </Button>
 
           {/* Dashboard Preview */}
-          <div className="w-full max-w-[1053px]">
+          <div className="w-full max-w-[1053px] mt-12">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-t from-primary via-transparent to-transparent z-10"></div>
               <img

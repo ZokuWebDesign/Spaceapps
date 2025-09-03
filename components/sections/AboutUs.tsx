@@ -4,6 +4,7 @@ import React, { useState, useRef, MouseEvent } from 'react';
 import { Button } from '../ui/button';
 import { X } from 'lucide-react';
 import { useTranslations } from '@/hooks/useTranslations';
+import { WHATSAPP_LINKS } from '@/constants/links';
 
 const AboutUs = () => {
   const t = useTranslations();
@@ -48,7 +49,7 @@ const AboutUs = () => {
       subtitle: t.aboutUs.cards.card1.subtitle,
       playIcon: "/assets/icons/play-icon.svg",
       logo: "/assets/logo/space-profile.svg",
-      youtubeId: "dQw4w9WgXcQ" // Replace with actual YouTube video ID
+      youtubeId: "jz_POR6Ow08"
     },
     {
       id: 2,
@@ -56,7 +57,7 @@ const AboutUs = () => {
       subtitle: t.aboutUs.cards.card2.subtitle,
       playIcon: "/assets/icons/play-icon.svg",
       logo: "/assets/logo/space-profile.svg",
-      youtubeId: "jNQXAC9IVRw" // Replace with actual YouTube video ID
+      youtubeId: "jz_POR6Ow08"
     },
     {
       id: 3,
@@ -64,7 +65,7 @@ const AboutUs = () => {
       subtitle: t.aboutUs.cards.card3.subtitle,
       playIcon: "/assets/icons/play-icon.svg",
       logo: "/assets/logo/space-profile.svg",
-      youtubeId: "L_jWHffIx5E" // Replace with actual YouTube video ID
+      youtubeId: "jz_POR6Ow08"
     }
   ];
 
@@ -105,7 +106,14 @@ const AboutUs = () => {
             
             {/* CTA Button */}
             <Button size="md" className="w-full lg:w-[282px]">
-              {t.aboutUs.cta}
+              <a
+                href={WHATSAPP_LINKS.CONTACT}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full h-full flex items-center justify-center"
+              >
+                {t.aboutUs.cta}
+              </a>
             </Button>
           </div>
 

@@ -4,6 +4,7 @@ import React, { useState, useRef, MouseEvent } from 'react';
 import { Button } from '../ui/button';
 import { X } from 'lucide-react';
 import { useTranslations } from '@/hooks/useTranslations';
+import { WHATSAPP_LINKS } from '@/constants/links';
 
 const Testimonials = () => {
   const t = useTranslations();
@@ -48,7 +49,7 @@ const Testimonials = () => {
       subtitle: "Micael",
       playIcon: "/assets/icons/play-icon.svg",
       logo: "/assets/logo/allprice-profile.svg",
-      youtubeId: "dQw4w9WgXcQ"
+      youtubeId: "jz_POR6Ow08"
     },
     {
       id: 2,
@@ -56,7 +57,7 @@ const Testimonials = () => {
       subtitle: "Taís",
       playIcon: "/assets/icons/play-icon.svg",
       logo: "/assets/logo/syd-profile.svg",
-      youtubeId: "jNQXAC9IVRw"
+      youtubeId: "jz_POR6Ow08"
     },
     {
       id: 3,
@@ -64,7 +65,7 @@ const Testimonials = () => {
       subtitle: "Antônio",
       playIcon: "/assets/icons/play-icon.svg",
       logo: "/assets/logo/upos-profile.svg",
-      youtubeId: "L_jWHffIx5E"
+      youtubeId: "jz_POR6Ow08"
     }
   ];
 
@@ -94,7 +95,14 @@ const Testimonials = () => {
         
         {/* CTA Button */}
         <Button size="md" className="w-full lg:w-[282px]">
-          {t.testimonials.cta}
+          <a
+            href={WHATSAPP_LINKS.CONTACT}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full h-full flex items-center justify-center"
+          >
+            {t.testimonials.cta}
+          </a>
         </Button>
       </div>
       {/* Cards Container */}

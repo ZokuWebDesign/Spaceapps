@@ -21,7 +21,9 @@ export default function Page() {
       <ComoFunciona />
       <FeatureImageTwo />
       <Contact />
+      {/*
       <Testimonials />
+      */}
       <FAQ />
       <Footer />
     </div>

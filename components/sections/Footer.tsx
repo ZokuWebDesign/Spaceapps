@@ -1,5 +1,6 @@
 "use client";
 
+import { SOCIAL_LINKS } from '@/constants/links';
 import { useTranslations } from '@/hooks/useTranslations';
 
 const Footer = () => {
@@ -33,19 +34,19 @@ const Footer = () => {
                 </p>
               </div>
               <div className="flex flex-row gap-4">
-                  <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                  <a href={SOCIAL_LINKS.LINKEDIN} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     <img src="/assets/icons/linkedin.svg" alt="LinkedIn" className="w-[44px] h-[44px]" />
                   </a>
-                  <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                  <a href={SOCIAL_LINKS.INSTAGRAM} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     <img src="/assets/icons/instagram.svg" alt="Instagram" className="w-[44px] h-[44px]" />
                   </a>
-                  <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                  <a href={SOCIAL_LINKS.FACEBOOK} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     <img src="/assets/icons/facebook.svg" alt="Facebook" className="w-[44px] h-[44px]" />
                   </a>
-                  <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                  <a href={SOCIAL_LINKS.YOUTUBE} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     <img src="/assets/icons/youtube.svg" alt="YouTube" className="w-[44px] h-[44px]" />
                   </a>
-                  <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                  <a href={SOCIAL_LINKS.TIKTOK} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     <img src="/assets/icons/tiktok.svg" alt="Tiktok" className="w-[44px] h-[44px]" />
                   </a>
               </div>
@@ -110,16 +111,19 @@ const Footer = () => {
               <div className="space-y-6">
                 <h3 className="text-xl font-bold text-white mb-4">{t.footer.social.title}</h3>
                 <div className="space-y-4">
-                  <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
-                    {t.footer.social.instagram}
-                  </a>
-                  <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                  <a href={SOCIAL_LINKS.LINKEDIN} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     {t.footer.social.linkedin}
                   </a>
-                  <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                  <a href={SOCIAL_LINKS.INSTAGRAM} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                    {t.footer.social.instagram}
+                  </a>
+                  <a href={SOCIAL_LINKS.FACEBOOK} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                    {t.footer.social.facebook}
+                  </a>
+                  <a href={SOCIAL_LINKS.YOUTUBE} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     {t.footer.social.youtube}
                   </a>
-                  <a href="#" className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                  <a href={SOCIAL_LINKS.TIKTOK} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     {t.footer.social.tiktok}
                   </a>
                 </div>

@@ -46,6 +46,7 @@ export const es = {
       title: "Social",
       instagram: "Instagram",
       linkedin: "Linkedin",
+      facebook: "Facebook",
       youtube: "Youtube",
       tiktok: "Tiktok"
     },

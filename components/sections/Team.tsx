@@ -3,6 +3,7 @@ import { link } from "fs";
 import { useRef, useState, MouseEvent } from "react";
 import { Button } from "../ui/button";
 import { useTranslations } from '@/hooks/useTranslations';
+import { WHATSAPP_LINKS } from "@/constants/links";
 
 const teamMembers = [
   {
@@ -92,7 +93,7 @@ const Team = () => {
     <section className="pt-[50px] pb-[97px]">
       <div className="flex flex-col gap-6 lg:gap-8 max-w-[1280px] mx-auto">
         {/* Header Section */}
-        <div className="flex flex-col gap-6 lg:gap-8 text-center max-w-[868px] mx-auto px-4">
+        <div className="flex flex-col gap-6 lg:gap-8 text-center items-center max-w-[868px] mx-auto px-4">
           <div className="flex flex-col gap-2 lg:gap-4">
             <h1 className="text-white">
               {t.team.title}
@@ -103,8 +104,15 @@ const Team = () => {
           </div>
           
           {/* CTA Button */}
-          <Button size="md" className="w-full lg:w-[282px]">
-            {t.team.cta}
+          <Button size="md" variant="primary" className="w-full lg:w-[282px]">
+            <a
+              href={WHATSAPP_LINKS.CONTACT}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-full flex items-center justify-center"
+            >
+              {t.team.cta}
+            </a>
           </Button>
         </div>
 

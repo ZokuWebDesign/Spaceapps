@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button } from '../ui/button';
 import { useTranslations } from '@/hooks/useTranslations';
+import { WHATSAPP_LINKS } from '@/constants/links';
 
 const Companies = () => {
   const t = useTranslations();
@@ -60,7 +61,14 @@ const Companies = () => {
           
           {/* CTA Buttons */}
           <Button size="md" className="w-full lg:w-[282px]">
-            {t.companies.cta}
+            <a
+              href={WHATSAPP_LINKS.CONTACT}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-full flex items-center justify-center"
+            >
+              {t.companies.cta}
+            </a>
           </Button>
         </div>
 

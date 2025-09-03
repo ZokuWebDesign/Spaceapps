@@ -1,7 +1,9 @@
 
 // WhatsApp Links
 export const WHATSAPP_LINKS = {
-  CONTACT: 'https://api.whatsapp.com/send/?phone='
+  CONTACT: 'https://api.whatsapp.com/send/?phone=5521976968053&text=Ol%C3%A1+Davi%2C+gostaria+de+fazer+um+or%C3%A7amento+para+o+meu+app%21&type=phone_number&app_absent=0',
+  WORK: 'https://api.whatsapp.com/send/?phone=5521976968053&text=Ol%C3%A1+Davi%2C+gostaria+de+discutir+um+projeto+de+trabalho&type=phone_number&app_absent=0',
+  RECRUIT: 'https://api.whatsapp.com/send/?phone=5521976968053&text=Ol%C3%A1+Davi%2C+gostaria+de+discutir+uma+oportunidade+de+trabalho&type=phone_number&app_absent=0'
 } as const;
 
 // Authentication and Registration Links
@@ -14,13 +16,13 @@ export const AUTH_LINKS = {
 // Social Media Links
 export const SOCIAL_LINKS = {
   FACEBOOK: 'https://www.facebook.com/people/spaceapps',
-  INSTAGRAM: 'https://instagram.com/spaceapps',
-  LINKEDIN: 'https://linkedin.com/company/spaceapps',
+  INSTAGRAM: 'https://instagram.com/spaceappss',
+  LINKEDIN: 'https://linkedin.com/company/spaceapps-br',
   YOUTUBE: 'https://youtube.com/@spaceapps',
   TIKTOK: 'https://tiktok.com/@spaceapps',
   X: 'https://x.com/spaceapps',
   MAIL: 'mailto:suporte@spaceapps.com.br',
-  NUMBER: 'tel:+55',
+  NUMBER: 'tel:+5521976968053',
   LOCAL: '#'
 } as const;
 
