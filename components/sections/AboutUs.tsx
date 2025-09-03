@@ -91,7 +91,7 @@ const AboutUs = () => {
       {/* Background container */}
       <div className="md:container max-w-[1182px] mx-auto relative z-10">
         {/* Main content container with gradient background and border */}
-        <div className="flex flex-col gap-8 relative pt-[74px] pb-[50px] rounded-[6px] bg-gradient-to-br from-white/10 to-gray-500/20 border border-tertiary backdrop-blur-sm overflow-hidden">
+        <div className="flex flex-col gap-4 relative pt-[74px] pb-[34px] rounded-[6px] bg-gradient-to-br from-white/10 to-gray-500/20 border border-tertiary backdrop-blur-sm overflow-hidden">
           
           {/* Header Section */}
           <div className="flex flex-col gap-[20px] px-4 lg:pl-[66px] lg:pr-[40px]">
@@ -120,7 +120,7 @@ const AboutUs = () => {
           {/* Cards Container */}
           <div 
             ref={containerRef}
-            className="flex flex-row overflow-x-auto px-4 lg:pl-[66px] lg:pr-[40px] gap-4 lg:gap-8 cursor-grab active:cursor-grabbing scrollbar-hide"
+            className="flex flex-row overflow-x-auto px-4 py-4 lg:pl-[66px] lg:pr-[40px] gap-4 lg:gap-8 cursor-grab active:cursor-grabbing scrollbar-hide"
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseLeave}

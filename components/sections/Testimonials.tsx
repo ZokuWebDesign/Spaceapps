@@ -80,7 +80,7 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="relative flex flex-col items-center gap-8 py-[80px] text-white overflow-hidden select-none">
+    <section className="relative flex flex-col items-center gap-4 pt-[80px] pb-[64px] text-white overflow-hidden select-none">
           
       {/* Header Section */}
       <div className="flex flex-col items-center w-full max-w-[958px] gap-6 lg:gap-8 px-4 lg:px-0">
@@ -108,7 +108,7 @@ const Testimonials = () => {
       {/* Cards Container */}
       <div 
         ref={containerRef}
-        className="flex flex-row justify-start overflow-x-auto max-w-7xl px-4 lg:px-[20px] gap-4 lg:gap-[30px] cursor-grab active:cursor-grabbing scrollbar-hide w-full"
+        className="flex flex-row justify-start overflow-x-auto max-w-7xl px-4 py-4 lg:px-[20px] gap-4 lg:gap-[30px] cursor-grab active:cursor-grabbing scrollbar-hide w-full"
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
