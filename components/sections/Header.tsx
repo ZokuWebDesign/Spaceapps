@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { useTranslations } from '@/hooks/useTranslations';
 import { usePathname } from 'next/navigation';
+import { WHATSAPP_LINKS } from "@/constants/links";
 
 const Header = () => {
   const t = useTranslations();
@@ -142,13 +143,16 @@ const Header = () => {
 
             {/* Mobile Actions */}
             <div className="flex lg:hidden items-center gap-4">
-              
               <Button 
-                className="h-[44px] w-[150px] px-4 rounded-[12.4px] bg-gradient-to-r from-[#dc0c6a] to-[#ff518e] hover:shadow-lg hover:scale-105 transition-all duration-200"
+                size="base"
+                className="w-[150px] text-sm font-bold text-white font-['Outfit',sans-serif]"
+                variant="primary"
               >
                 <a
-                  href="https://all-price-copy.bubbleapps.io/cadastro"
-                  className="w-full text-sm text-white font-bold font-['Outfit',sans-serif]"
+                  href={WHATSAPP_LINKS.CONTACT}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full h-full flex items-center justify-center"
                 >
                   {t.header.cta}
                 </a>
