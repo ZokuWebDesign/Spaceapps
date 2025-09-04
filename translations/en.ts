@@ -29,7 +29,7 @@ export const en = {
     }
   },
   footer: {
-    description: "The largest space exploration platform. Unique and authentic creations for space discoveries. Powered by blockchain technology.",
+  description: "No/low-code agency accelerating digital products. We prototype, build and launch software fast with clarity, process and real user focus.",
     navigation: {
       title: "Site Map",
       home: "Home",

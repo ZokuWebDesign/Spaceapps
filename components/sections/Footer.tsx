@@ -40,6 +40,7 @@ const Footer = () => {
                   <a href={SOCIAL_LINKS.INSTAGRAM} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     <img src="/assets/icons/instagram.svg" alt="Instagram" className="w-[44px] h-[44px]" />
                   </a>
+                  {/*
                   <a href={SOCIAL_LINKS.FACEBOOK} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     <img src="/assets/icons/facebook.svg" alt="Facebook" className="w-[44px] h-[44px]" />
                   </a>
@@ -49,6 +50,7 @@ const Footer = () => {
                   <a href={SOCIAL_LINKS.TIKTOK} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     <img src="/assets/icons/tiktok.svg" alt="Tiktok" className="w-[44px] h-[44px]" />
                   </a>
+                  */}
               </div>
 
             </div>
@@ -117,6 +119,7 @@ const Footer = () => {
                   <a href={SOCIAL_LINKS.INSTAGRAM} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     {t.footer.social.instagram}
                   </a>
+                  {/*
                   <a href={SOCIAL_LINKS.FACEBOOK} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     {t.footer.social.facebook}
                   </a>
@@ -126,6 +129,7 @@ const Footer = () => {
                   <a href={SOCIAL_LINKS.TIKTOK} className="flex items-center text-white/70 text-lg hover:text-cyan-400 transition-colors">
                     {t.footer.social.tiktok}
                   </a>
+                  */}
                 </div>
               </div>
 

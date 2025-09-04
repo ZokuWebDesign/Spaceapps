@@ -29,7 +29,7 @@ export const pt = {
     }
   },
   footer: {
-    description: "A maior plataforma de exploração espacial. Criações únicas e autênticas para descobertas espaciais. Possibilitado pela tecnologia blockchain.",
+  description: "Agência no/low-code que acelera produtos digitais. Prototipamos, construímos e lançamos software rápido com clareza, processo e foco em usuários reais.",
     navigation: {
       title: "Mapa",
       home: "Início",
