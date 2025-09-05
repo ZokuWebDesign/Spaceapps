@@ -79,22 +79,47 @@ async function ensureSheetExists(spreadsheetId, sheetName) {
 let transporter = null;
 if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
   try {
+    // Sanitize / trim env vars (avoid accidental quotes or spaces)
+    const smtpHost = process.env.SMTP_HOST?.trim();
+    const smtpPort = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT.trim()) : 587;
+    const smtpSecure = process.env.SMTP_SECURE === 'true';
+    const smtpUser = process.env.SMTP_USER?.trim();
+    const smtpPass = process.env.SMTP_PASS?.trim();
+    // Remove wrapping quotes if present in EMAIL_FROM
+    const rawFrom = process.env.EMAIL_FROM?.trim().replace(/^"|"$/g, '');
+    // If display name format "Name <email>", extract address for validation
+    const fromMatch = rawFrom?.match(/<([^>]+)>/);
+    const fromAddress = fromMatch ? fromMatch[1] : rawFrom;
+    let finalFrom = rawFrom;
+    if (!fromAddress || !/@/.test(fromAddress)) {
+      finalFrom = smtpUser; // fallback
+    } else if (smtpUser && fromAddress && fromAddress.toLowerCase() !== smtpUser.toLowerCase()) {
+      // If provider rejects differing sender, fallback to authenticated user keeping display name if any
+      finalFrom = rawFrom?.includes('<') ? rawFrom.replace(fromAddress, smtpUser) : smtpUser;
+    }
+
     transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587,
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: process.env.SMTP_USER && process.env.SMTP_PASS ? {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      } : undefined,
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpSecure,           // true => implicit TLS (465)
+      requireTLS: !smtpSecure,      // force STARTTLS when not implicit
+      authMethod: 'LOGIN',          // force LOGIN over PLAIN (some providers prefer)
+      auth: (smtpUser && smtpPass) ? { user: smtpUser, pass: smtpPass } : undefined,
+      logger: process.env.SMTP_DEBUG === 'true',
+      debug: process.env.SMTP_DEBUG === 'true'
     });
+
+    // Expose sanitized finalFrom for use later
+    process.env.__EFFECTIVE_EMAIL_FROM = finalFrom;
+
     // Light diagnostics (won't expose secrets)
     transporter.verify().then(() => {
-      console.log('📧 Email transporter verified (host=%s port=%s secure=%s user=%s)',
-        process.env.SMTP_HOST,
-        process.env.SMTP_PORT || '587',
-        process.env.SMTP_SECURE === 'true',
-        process.env.SMTP_USER ? maskMiddle(process.env.SMTP_USER) : 'none');
+      console.log('📧 Email transporter verified host=%s port=%s secure=%s user=%s from=%s',
+        smtpHost,
+        smtpPort,
+        smtpSecure,
+        smtpUser ? maskMiddle(smtpUser) : 'none',
+        finalFrom);
     }).catch(err => {
       console.warn('⚠️  Email transporter verification failed:', err.message);
     });
@@ -125,7 +150,7 @@ async function sendLeadEmail(data) {
   </ul>`;
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
+      from: process.env.__EFFECTIVE_EMAIL_FROM || process.env.EMAIL_FROM || process.env.SMTP_USER,
       to: process.env.EMAIL_TO,
       subject,
       text,
