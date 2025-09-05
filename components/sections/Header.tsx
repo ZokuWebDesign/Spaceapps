@@ -144,8 +144,8 @@ const Header = () => {
             {/* Mobile Actions */}
             <div className="flex lg:hidden items-center gap-4">
               <Button 
-                size="base"
-                className="w-[150px] text-sm font-bold text-white font-['Outfit',sans-serif]"
+                size="sm"
+                className="text-sm font-bold text-white font-['Outfit',sans-serif]"
                 variant="primary"
               >
                 <a

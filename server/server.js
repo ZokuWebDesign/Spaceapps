@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { google } = require('googleapis');
 require('dotenv').config();
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -32,7 +33,54 @@ const sheets = google.sheets({ version: 'v4', auth });
 // Configuration
 const MAIN_SPREADSHEET_ID = process.env.GOOGLE_SHEETS_MAIN_ID;
 const BACKUP_SPREADSHEET_ID = process.env.GOOGLE_SHEETS_BACKUP_ID;
-const SHEET_NAME = 'Contatos';
+const SHEET_NAME = 'Contatos Site Space';
+
+// Email notification setup (global, optional)
+let transporter = null;
+if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
+  try {
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587,
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: process.env.SMTP_USER && process.env.SMTP_PASS ? {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      } : undefined,
+    });
+  } catch (err) {
+    console.error('Failed to initialize mail transporter:', err);
+  }
+}
+
+async function sendLeadEmail(data) {
+  if (!transporter) return { skipped: true };
+  if (!process.env.EMAIL_TO || !process.env.EMAIL_FROM) {
+    console.warn('Email notification skipped: EMAIL_TO or EMAIL_FROM missing');
+    return { skipped: true };
+  }
+  const subject = `Novo lead (${data.whatsapp}) - SpaceApps`;
+  const text = `Novo lead capturado\n\nWhatsApp: ${data.whatsapp}\nHorário Preferido: ${data.preferredTime}\nData/Hora: ${data.timestamp}`;
+  const html = `<h2>Novo lead capturado</h2>
+  <ul>
+    <li><strong>WhatsApp:</strong> ${data.whatsapp}</li>
+    <li><strong>Horário Preferido:</strong> ${data.preferredTime}</li>
+    <li><strong>Data/Hora:</strong> ${data.timestamp}</li>
+  </ul>`;
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: process.env.EMAIL_TO,
+      subject,
+      text,
+      html,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Error sending lead email:', error);
+    return { success: false, error: error.message };
+  }
+}
 
 // Helper Functions
 async function appendToSheet(spreadsheetId, data) {
@@ -159,13 +207,20 @@ app.post('/api/contact', async (req, res) => {
       appendToSheet(BACKUP_SPREADSHEET_ID, contactData)
     ]);
 
+    // Optional email notification
+    let emailResult = null;
+    if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
+      emailResult = await sendLeadEmail(contactData);
+    }
+
     res.json({
       success: true,
       message: 'Contato salvo com sucesso! Nossa equipe entrará em contato em breve.',
       data: {
         timestamp: contactData.timestamp,
         mainSheet: mainResult.updates?.updatedRows || 1,
-        backupSheet: backupResult.updates?.updatedRows || 1
+        backupSheet: backupResult.updates?.updatedRows || 1,
+        email: emailResult ? (emailResult.success ? 'sent' : (emailResult.skipped ? 'skipped' : 'failed')) : 'disabled'
       }
     });
 

@@ -15,6 +15,7 @@ const buttonVariants = cva(
         outline: "border border-white text-white hover:bg-white hover:text-[#363279]",
       },
       size: {
+        sm: "h-[44px] w-[150px]",
         base: "h-[45px] w-[282px]",
         md: "h-[48px] w-[282px]", 
         lg: "h-[62px] w-[245px]",

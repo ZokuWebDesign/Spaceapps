@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
+import nodemailer from 'nodemailer';
 
 // Initialize Google Sheets API
 const auth = new google.auth.GoogleAuth({
@@ -15,7 +16,25 @@ const sheets = google.sheets({ version: 'v4', auth });
 // Configuration for your spreadsheets
 const MAIN_SPREADSHEET_ID = process.env.GOOGLE_SHEETS_MAIN_ID;
 const BACKUP_SPREADSHEET_ID = process.env.GOOGLE_SHEETS_BACKUP_ID;
-const SHEET_NAME = 'Contatos'; // You can change this to your preferred sheet name
+const SHEET_NAME = 'Contatos Site Space'; // Sheets name must match exactly
+
+// Optional email transporter (only initialized if enabled)
+let transporter: nodemailer.Transporter | null = null;
+if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
+  try {
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587,
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: process.env.SMTP_USER && process.env.SMTP_PASS ? {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      } : undefined,
+    });
+  } catch (e) {
+    console.error('Failed to initialize nodemailer transporter:', e);
+  }
+}
 
 interface ContactData {
   whatsapp: string;
@@ -72,6 +91,27 @@ async function createHeadersIfNeeded(spreadsheetId: string) {
   } catch (error) {
     console.error('Error creating headers:', error);
     // If sheet doesn't exist, it will be created automatically when we append data
+  }
+}
+
+async function sendLeadEmail(data: ContactData) {
+  if (!transporter) return { skipped: true };
+  if (!process.env.EMAIL_TO || !process.env.EMAIL_FROM) return { skipped: true };
+  const subject = `Novo lead (${data.whatsapp}) - SpaceApps`;
+  const text = `Novo lead capturado\n\nWhatsApp: ${data.whatsapp}\nHorário Preferido: ${data.preferredTime}\nData/Hora: ${data.timestamp}`;
+  const html = `<h2>Novo lead capturado</h2><ul><li><strong>WhatsApp:</strong> ${data.whatsapp}</li><li><strong>Horário Preferido:</strong> ${data.preferredTime}</li><li><strong>Data/Hora:</strong> ${data.timestamp}</li></ul>`;
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: process.env.EMAIL_TO,
+      subject,
+      text,
+      html,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error: any) {
+    console.error('Error sending lead email:', error);
+    return { success: false, error: error.message };
   }
 }
 
@@ -133,13 +173,20 @@ export async function POST(request: NextRequest) {
       appendToSheet(BACKUP_SPREADSHEET_ID, contactData)
     ]);
 
+    // Optional email notification
+    let emailResult: any = null;
+    if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
+      emailResult = await sendLeadEmail(contactData);
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Contato salvo com sucesso! Nossa equipe entrará em contato em breve.',
       data: {
         timestamp: contactData.timestamp,
         mainSheet: mainResult.updates?.updatedRows || 1,
-        backupSheet: backupResult.updates?.updatedRows || 1
+        backupSheet: backupResult.updates?.updatedRows || 1,
+        email: emailResult ? (emailResult.success ? 'sent' : (emailResult.skipped ? 'skipped' : 'failed')) : 'disabled'
       }
     });
 
