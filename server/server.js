@@ -35,6 +35,13 @@ const MAIN_SPREADSHEET_ID = process.env.GOOGLE_SHEETS_MAIN_ID;
 const BACKUP_SPREADSHEET_ID = process.env.GOOGLE_SHEETS_BACKUP_ID;
 const SHEET_NAME = 'Contatos Site Space';
 
+// Quote sheet names for A1 notation when they contain spaces or special characters.
+// If the sheet name contains single quotes, escape them by doubling as required by A1 notation.
+function quoteSheetName(name) {
+  if (!name) return name;
+  return `'${String(name).replace(/'/g, "''")}'`;
+}
+
 // Email notification setup (global, optional)
 let transporter = null;
 if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
@@ -87,7 +94,7 @@ async function appendToSheet(spreadsheetId, data) {
   try {
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: `${SHEET_NAME}!A:D`,
+      range: `${quoteSheetName(SHEET_NAME)}!A:D`,
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       requestBody: {
@@ -112,7 +119,7 @@ async function createHeadersIfNeeded(spreadsheetId) {
   try {
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `${SHEET_NAME}!A1:D1`,
+      range: `${quoteSheetName(SHEET_NAME)}!A1:D1`,
     });
 
     if (!response.data.values || response.data.values.length === 0) {
