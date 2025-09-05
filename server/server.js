@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 10000;
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://your-static-site.netlify.app', // Replace with your actual domain
-    'https://your-static-site.vercel.app',  // Replace with your actual domain
+    'https://spaceapps.com.br', // Replace with your actual domain
+    'https://www.spaceapps.com.br',  // Replace with your actual domain
     // Add more domains as needed
   ],
   credentials: true
