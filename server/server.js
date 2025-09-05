@@ -42,6 +42,39 @@ function quoteSheetName(name) {
   return `'${String(name).replace(/'/g, "''")}'`;
 }
 
+// Cache to avoid repeated metadata lookups per deployment runtime
+const sheetExistenceCache = new Map(); // key: `${spreadsheetId}:${SHEET_NAME}` -> true
+
+async function ensureSheetExists(spreadsheetId, sheetName) {
+  const cacheKey = `${spreadsheetId}:${sheetName}`;
+  if (sheetExistenceCache.has(cacheKey)) return; // already verified
+  try {
+    const meta = await sheets.spreadsheets.get({
+      spreadsheetId,
+      fields: 'sheets(properties(title))'
+    });
+    const exists = meta.data.sheets?.some(s => s.properties?.title === sheetName);
+    if (exists) {
+      sheetExistenceCache.set(cacheKey, true);
+      return;
+    }
+    // Create sheet if missing
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId,
+      requestBody: {
+        requests: [
+          { addSheet: { properties: { title: sheetName } } }
+        ]
+      }
+    });
+    sheetExistenceCache.set(cacheKey, true);
+    console.log(`Created sheet '${sheetName}' in spreadsheet ${spreadsheetId}`);
+  } catch (err) {
+    console.error(`Failed ensuring sheet '${sheetName}' exists in ${spreadsheetId}:`, err?.response?.data || err.message);
+    throw err;
+  }
+}
+
 // Email notification setup (global, optional)
 let transporter = null;
 if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
@@ -202,7 +235,11 @@ app.post('/api/contact', async (req, res) => {
       })
     };
 
-    // Create headers if needed
+    // Ensure sheet exists then create headers if needed
+    await Promise.all([
+      ensureSheetExists(MAIN_SPREADSHEET_ID, SHEET_NAME),
+      ensureSheetExists(BACKUP_SPREADSHEET_ID, SHEET_NAME)
+    ]);
     await Promise.all([
       createHeadersIfNeeded(MAIN_SPREADSHEET_ID),
       createHeadersIfNeeded(BACKUP_SPREADSHEET_ID)
