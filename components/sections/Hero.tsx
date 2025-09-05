@@ -100,20 +100,22 @@ const Hero = () => {
           </div>
 
           {/* CTA Button */}
-          <Button 
-            size="base"
-            className="w-full lg:w-[282px] text-[20px] font-extrabold"
-            variant="primary"
-          >
-            <a
-              href={WHATSAPP_LINKS.CONTACT}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full h-full flex items-center justify-center"
+          <div className="w-full md:w-[282px]">
+            <Button
+              size="base"
+              className="w-full"
+              variant="primary"
             >
-              {t.hero.cta}
-            </a>
-          </Button>
+              <a
+                href={WHATSAPP_LINKS.CONTACT}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full h-full flex items-center justify-center text-[20px] font-extrabold"
+              >
+                {t.hero.cta}
+              </a>
+            </Button>
+          </div>
 
           {/* Dashboard Preview */}
           <div className="w-full max-w-[1053px] mt-12">

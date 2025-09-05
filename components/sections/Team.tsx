@@ -104,7 +104,11 @@ const Team = () => {
           </div>
           
           {/* CTA Button */}
-          <Button size="md" variant="primary" className="w-full lg:w-[282px]">
+          <Button 
+            size="md"
+            variant="primary"
+            className="w-full md:w-[282px]"
+          >
             <a
               href={WHATSAPP_LINKS.CONTACT}
               target="_blank"
@@ -119,7 +123,7 @@ const Team = () => {
         {/* Team Cards Auto-Wrap Layout */}
         <div 
           ref={containerRef}
-          className="flex flex-row justify-start lg:justify-center md:flex-wrap overflow-x-auto md:overflow-x-visible gap-4 px-4 w-full max-w-[1168px] mx-auto md:cursor-default cursor-grab active:cursor-grabbing scrollbar-hide select-none"
+          className="flex flex-row justify-start md:justify-center md:flex-wrap overflow-x-auto md:overflow-x-visible gap-4 px-4 w-full max-w-[1168px] mx-auto md:cursor-default cursor-grab active:cursor-grabbing scrollbar-hide select-none"
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}

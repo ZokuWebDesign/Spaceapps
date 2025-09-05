@@ -60,7 +60,7 @@ const Companies = () => {
           />
           
           {/* CTA Buttons */}
-          <Button size="md" className="w-full lg:w-[282px]">
+          <Button size="md" className="w-full md:w-[282px]">
             <a
               href={WHATSAPP_LINKS.CONTACT}
               target="_blank"
@@ -73,7 +73,7 @@ const Companies = () => {
         </div>
 
         {/* Companies Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-8 max-w-6xl mx-auto select-none">
           {companies.map((company, index) => (
             <div
               key={index}

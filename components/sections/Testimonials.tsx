@@ -94,7 +94,7 @@ const Testimonials = () => {
         </div>
         
         {/* CTA Button */}
-        <Button size="md" className="w-full lg:w-[282px]">
+        <Button size="md" className="w-full md:w-[282px]">
           <a
             href={WHATSAPP_LINKS.CONTACT}
             target="_blank"

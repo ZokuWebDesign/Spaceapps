@@ -237,14 +237,16 @@ const Contact = () => {
               </div>
 
               {/* Submit Button */}
-              <Button 
-                type="submit" 
-                size="lg" 
-                disabled={isSubmitting}
-                className="w-full lg:max-w-[248px]"
-              >
-                {isSubmitting ? t.contact.form.submittingButton : t.contact.form.submitButton}
-              </Button>
+              <div className="w-full md:w-[245px]">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? t.contact.form.submittingButton : t.contact.form.submitButton}
+                </Button>
+              </div>
             </form>
           </div>
         </div>

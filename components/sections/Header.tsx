@@ -145,14 +145,14 @@ const Header = () => {
             <div className="flex lg:hidden items-center gap-4">
               <Button 
                 size="sm"
-                className="text-sm font-bold text-white font-['Outfit',sans-serif]"
+                className="w-[150px]"
                 variant="primary"
               >
                 <a
                   href={WHATSAPP_LINKS.CONTACT}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full h-full flex items-center justify-center"
+                  className="w-full h-full flex items-center justify-center text-sm font-bold text-white font-['Outfit',sans-serif]"
                 >
                   {t.header.cta}
                 </a>

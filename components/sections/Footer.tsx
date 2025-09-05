@@ -16,7 +16,7 @@ const Footer = () => {
         }}
       ></div>
       
-      <div className="relative w-full mx-auto max-w-7xl px-6 lg:px-12 py-[27px]">
+      <div className="relative w-full mx-auto max-w-7xl px-4 lg:px-12 py-[27px]">
           {/* Main footer content */}
           <div className="flex flex-col lg:flex-row w-full gap-6 lg:justify-between pt-[79px]">
             {/* Brand and description */}

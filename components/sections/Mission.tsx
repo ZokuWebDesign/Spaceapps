@@ -37,7 +37,7 @@ const Mission = () => {
       <div className="max-w-7xl flex flex-col gap-[40px] items-center mx-auto pt-[40px] pb-[52px]">
         {/* Title Section */}
         <div 
-          className={`max-w-4xl flex flex-col gap-6 text-center transition-all duration-300 ${
+          className={`max-w-4xl flex flex-col px-4 gap-6 text-center transition-all duration-300 ${
             isVisible 
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 translate-y-8'
