@@ -88,9 +88,25 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
         pass: process.env.SMTP_PASS
       } : undefined,
     });
+    // Light diagnostics (won't expose secrets)
+    transporter.verify().then(() => {
+      console.log('📧 Email transporter verified (host=%s port=%s secure=%s user=%s)',
+        process.env.SMTP_HOST,
+        process.env.SMTP_PORT || '587',
+        process.env.SMTP_SECURE === 'true',
+        process.env.SMTP_USER ? maskMiddle(process.env.SMTP_USER) : 'none');
+    }).catch(err => {
+      console.warn('⚠️  Email transporter verification failed:', err.message);
+    });
   } catch (err) {
     console.error('Failed to initialize mail transporter:', err);
   }
+}
+
+function maskMiddle(str) {
+  if (!str) return str;
+  if (str.length <= 5) return '***';
+  return str.slice(0,2) + '***' + str.slice(-2);
 }
 
 async function sendLeadEmail(data) {
@@ -276,6 +292,28 @@ app.post('/api/contact', async (req, res) => {
       details: process.env.NODE_ENV === 'development' ? 
         (error instanceof Error ? error.message : 'Unknown error') : undefined
     });
+  }
+});
+
+// Simple protected email test route - requires EMAIL_TEST_KEY env and matching query param key
+app.post('/api/email-test', async (req, res) => {
+  try {
+    if (process.env.EMAIL_TEST_KEY && req.query.key !== process.env.EMAIL_TEST_KEY) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    if (!transporter) return res.status(400).json({ error: 'Email disabled' });
+    const to = process.env.EMAIL_TO || process.env.EMAIL_FROM;
+    if (!to) return res.status(400).json({ error: 'EMAIL_TO/EMAIL_FROM missing' });
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER || to,
+      to,
+      subject: 'SpaceApps test email',
+      text: 'Email test OK',
+    });
+    res.json({ success: true, id: info.messageId });
+  } catch (e) {
+    console.error('Email test failed:', e);
+    res.status(500).json({ error: e.message });
   }
 });
 

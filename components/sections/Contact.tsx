@@ -116,7 +116,11 @@ const Contact = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
-    
+    // Immediate feedback toast while request is in-flight
+    const submittingToast = toast({
+      title: t.contact.form.submittingButton,
+      description: (t as any)?.contact?.form?.sendingMessage || 'Enviando suas informações...'
+    });
     try {
       // Use environment variable for API URL, fallback to relative path for development
       const apiUrl = process.env.NEXT_PUBLIC_API_URL 
@@ -134,12 +138,14 @@ const Contact = () => {
       const result = await response.json();
 
       if (response.ok) {
+        submittingToast.dismiss();
         toast({
           title: t.contact.form.success.title,
           description: result.message || t.contact.form.success.message,
         });
         resetForm(); // Clear form and state
       } else {
+        submittingToast.dismiss();
         toast({
           title: t.contact.form.error.title,
           description: result.error || t.contact.form.error.genericMessage,
@@ -147,6 +153,7 @@ const Contact = () => {
         });
       }
     } catch (error) {
+      submittingToast.dismiss();
       toast({
         title: t.contact.form.error.title,
         description: t.contact.form.error.connectionMessage,
