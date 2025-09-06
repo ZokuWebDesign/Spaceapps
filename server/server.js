@@ -3,6 +3,7 @@ const cors = require('cors');
 const { google } = require('googleapis');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail'); // SendGrid for bypassing SMTP password issues
 
 console.log('📦 PACKAGE INFO:');
 console.log('  Node version:', process.version);
@@ -372,21 +373,15 @@ function maskMiddle(str) {
 
 async function sendLeadEmail(data) {
   try {
-    if (!transporter) {
-      console.warn('Email notification skipped: transporter not initialized');
-      return { skipped: true };
-    }
-    
     // Validar se temos as configurações necessárias
-    if (!process.env.EMAIL_TO || !process.env.SMTP_USER) {
-      console.warn('Email notification skipped: EMAIL_TO or SMTP_USER missing');
+    if (!process.env.EMAIL_TO) {
+      console.warn('Email notification skipped: EMAIL_TO missing');
       return { skipped: true };
     }
 
-    console.log('Iniciando tentativa de envio de email...');
-    console.log('De:', cleanedSMTPUser || process.env.SMTP_USER);
-    console.log('Para:', process.env.EMAIL_TO);
-    console.log('Dados do lead:', { whatsapp: data.whatsapp, preferredTime: data.preferredTime });
+    console.log('🚀 Attempting to send email notification...');
+    console.log('Recipient:', process.env.EMAIL_TO);
+    console.log('Lead data:', { whatsapp: data.whatsapp, preferredTime: data.preferredTime });
 
     const subject = `Novo lead (${data.whatsapp}) - SpaceApps`;
     const text = `Novo lead capturado via https://spaceapps.com.br\n\nWhatsApp: ${data.whatsapp}\nHorário Preferido: ${data.preferredTime}\nData/Hora: ${data.timestamp}`;
@@ -398,18 +393,73 @@ async function sendLeadEmail(data) {
       <p><strong>Data/Hora:</strong> ${data.timestamp}</p>
     `;
 
-    const info = await transporter.sendMail({
-      from: cleanedSMTPUser || process.env.SMTP_USER, // Use cleaned credentials
-      to: process.env.EMAIL_TO,
-      subject,
-      text,
-      html,
-    });
+    // METHOD 1: Try SendGrid API first (bypasses SMTP password corruption)
+    if (process.env.SENDGRID_API_KEY) {
+      console.log('📧 Using SendGrid API (bypassing SMTP)...');
+      try {
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        
+        const msg = {
+          to: process.env.EMAIL_TO,
+          from: process.env.EMAIL_FROM || process.env.SMTP_USER || 'contato@spaceapps.com.br',
+          subject: subject,
+          text: text,
+          html: html
+        };
 
-    console.log('Email enviado com sucesso:', info.messageId);
-    return { success: true, messageId: info.messageId };
+        const response = await sgMail.send(msg);
+        console.log('✅ SendGrid email sent successfully!');
+        console.log('SendGrid response:', response[0].statusCode);
+        return { success: true, method: 'sendgrid', messageId: response[0].headers['x-message-id'] };
+        
+      } catch (sendgridError) {
+        console.log('❌ SendGrid failed:', sendgridError.message);
+        if (sendgridError.response) {
+          console.log('SendGrid error details:', sendgridError.response.body);
+        }
+        // Fall through to SMTP method
+      }
+    } else {
+      console.log('⚠️ No SENDGRID_API_KEY found, skipping SendGrid');
+    }
+
+    // METHOD 2: Fall back to SMTP (known to fail due to Render password corruption)
+    if (transporter) {
+      console.log('📧 Falling back to SMTP method...');
+      console.log('⚠️ WARNING: SMTP passwords are corrupted by Render platform');
+      
+      try {
+        const info = await transporter.sendMail({
+          from: cleanedSMTPUser || process.env.SMTP_USER || 'contato@spaceapps.com.br',
+          to: process.env.EMAIL_TO,
+          subject: subject,
+          text: text,
+          html: html
+        });
+
+        console.log('✅ SMTP email sent successfully (unexpected!)');
+        console.log('Message ID:', info.messageId);
+        return { success: true, method: 'smtp', messageId: info.messageId };
+        
+      } catch (smtpError) {
+        console.log('❌ SMTP failed as expected:', smtpError.message);
+        return { 
+          success: false, 
+          error: 'SMTP password corrupted by platform', 
+          details: smtpError.message 
+        };
+      }
+    } else {
+      console.warn('❌ No email transporter available');
+      return { 
+        success: false, 
+        error: 'No email service configured',
+        recommendation: 'Add SENDGRID_API_KEY to environment variables' 
+      };
+    }
+
   } catch (error) {
-    console.error('Erro detalhado no envio de email:', {
+    console.error('❌ Email sending failed:', {
       message: error.message,
       name: error.name,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
@@ -588,118 +638,85 @@ app.post('/email-test', async (req, res) => {
       return res.status(400).json({ error: 'EMAIL_TO or SMTP_USER missing' });
     }
 
-    console.log('Enviando email de teste...');
+    console.log('🧪 Starting comprehensive email test...');
     
-    // Test current transporter first
+    // METHOD 1: Test SendGrid first (should work)
+    if (process.env.SENDGRID_API_KEY) {
+      try {
+        console.log('📧 Testing SendGrid API...');
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        
+        const msg = {
+          to: to,
+          from: process.env.EMAIL_FROM || process.env.SMTP_USER || 'contato@spaceapps.com.br',
+          subject: 'SpaceApps - SendGrid Test Email',
+          text: 'This is a test email from SpaceApps using SendGrid API. If you received this message, SendGrid is working correctly and bypassing the SMTP password corruption issue.',
+          html: `
+            <h2>SpaceApps - SendGrid Test Email</h2>
+            <p>This is a test email from SpaceApps using <strong>SendGrid API</strong>.</p>
+            <p>✅ If you received this message, SendGrid is working correctly and bypassing the SMTP password corruption issue.</p>
+            <p><small>Sent at: ${new Date().toISOString()}</small></p>
+          `
+        };
+
+        const response = await sgMail.send(msg);
+        console.log('✅ SendGrid test email sent successfully!');
+        return res.json({ 
+          success: true, 
+          method: 'SendGrid API',
+          messageId: response[0].headers['x-message-id'],
+          statusCode: response[0].statusCode,
+          note: 'SendGrid bypasses SMTP password corruption'
+        });
+        
+      } catch (sendgridError) {
+        console.log('❌ SendGrid test failed:', sendgridError.message);
+        if (sendgridError.response) {
+          console.log('SendGrid error details:', sendgridError.response.body);
+        }
+        // Continue to SMTP tests
+      }
+    } else {
+      console.log('⚠️ No SENDGRID_API_KEY found - skipping SendGrid test');
+    }
+
+    // METHOD 2: Test current SMTP transporter (will fail due to password corruption)
     if (transporter) {
       try {
+        console.log('📧 Testing current SMTP transporter...');
         const info = await transporter.sendMail({
           from: cleanedSMTPUser || process.env.SMTP_USER,
           to,
-          subject: 'SpaceApps - Teste de Email',
-          text: 'Este é um email de teste do sistema SpaceApps. Se você recebeu esta mensagem, o sistema de email está funcionando corretamente.',
-          html: '<h2>SpaceApps - Teste de Email</h2><p>Este é um email de teste do sistema SpaceApps.</p><p>Se você recebeu esta mensagem, o sistema de email está funcionando corretamente.</p>'
+          subject: 'SpaceApps - SMTP Test (Will Fail)',
+          text: 'This SMTP test will fail due to Render platform password corruption.',
+          html: '<h2>SpaceApps - SMTP Test</h2><p>⚠️ This SMTP test will fail due to Render platform password corruption.</p>'
         });
         
-        console.log('Email de teste enviado com sucesso:', info.messageId);
-        return res.json({ success: true, messageId: info.messageId, method: 'current' });
-      } catch (error) {
-        console.error('Current transporter failed:', error.message);
-      }
-    }
-
-    // Try alternative configurations
-    const configs = [
-      {
-        name: 'Titan 587 STARTTLS v1.2',
-        host: 'smtp.titan.email',
-        port: 587,
-        secure: false,
-        requireTLS: true,
-  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
-      },
-      {
-        name: 'Titan 465 SSL Legacy',
-        host: 'smtp.titan.email',
-        port: 465,
-        secure: true,
-  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
-      },
-      {
-        name: 'HostGator Direct 587',
-        host: 'mail.spaceapps.com.br',
-        port: 587,
-        secure: false,
-        requireTLS: true,
-  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
-      },
-      {
-        name: 'HostGator Direct 465',
-        host: 'mail.spaceapps.com.br',
-        port: 465,
-        secure: true,
-  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
-      },
-      {
-        name: 'HostGator Server Direct',
-        host: 'gator4171.hostgator.com',
-        port: 587,
-        secure: false,
-        requireTLS: true,
-  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
-      },
-      {
-        name: 'Titan No TLS (Insecure)',
-        host: 'smtp.titan.email',
-        port: 587,
-        secure: false,
-        requireTLS: false,
-        ignoreTLS: true
-      }
-    ];
-
-    // Preparar credenciais limpas localmente
-    const user = (process.env.SMTP_USER || '').trim().replace(/['"]/g, '');
-    const pass = (process.env.SMTP_PASS || '').trim().replace(/['"]/g, '');
-
-    for (const config of configs) {
-      try {
-        console.log(`Testando configuração: ${config.name}`);
-        const testTransporter = nodemailer.createTransport({
-          ...config,
-          auth: { user, pass, method: 'LOGIN' },
-          connectionTimeout: 30000,
-          greetingTimeout: 15000,
-          socketTimeout: 30000,
-          debug: process.env.SMTP_DEBUG === 'true',
-          logger: process.env.SMTP_DEBUG === 'true'
-        });
-
-        await testTransporter.verify();
-        console.log(`✅ Configuração ${config.name} verificada com sucesso`);
-        
-        const info = await testTransporter.sendMail({
-          from: user,
-          to,
-          subject: `SpaceApps - Teste ${config.name}`,
-          text: `Email de teste usando configuração: ${config.name}`,
-        });
-        
-        console.log(`Email enviado com ${config.name}:`, info.messageId);
+        console.log('✅ SMTP test email sent (unexpected!):', info.messageId);
         return res.json({ 
           success: true, 
-          messageId: info.messageId, 
-          method: config.name,
-          config: { ...config, auth: 'hidden' }
+          method: 'SMTP (Unexpected Success)',
+          messageId: info.messageId,
+          note: 'This should not work due to password corruption'
         });
+        
       } catch (error) {
-        console.error(`❌ Configuração ${config.name} falhou:`, error.message);
+        console.error('❌ SMTP test failed as expected:', error.message);
       }
     }
 
-    return res.status(500).json({ error: 'Todas as configurações falharam', details: 'Verifique credenciais e configurações DNS' });
+    // If we get here, both SendGrid and SMTP failed
+    return res.status(500).json({ 
+      error: 'All email methods failed',
+      details: {
+        sendgrid: process.env.SENDGRID_API_KEY ? 'Failed - check API key and domain verification' : 'Not configured',
+        smtp: 'Failed due to Render platform password corruption'
+      },
+      recommendation: 'Configure SendGrid API key to bypass SMTP issues'
+    });
+
   } catch (e) {
-    console.error('Falha no teste de email:', e);
+    console.error('❌ Email test failed:', e);
     res.status(500).json({ error: e.message });
   }
 });
