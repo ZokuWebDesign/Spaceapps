@@ -122,10 +122,10 @@ const Contact = () => {
       description: (t as any)?.contact?.form?.sendingMessage || 'Enviando suas informações...'
     });
     try {
-      // Use environment variable for API URL, fallback to relative path for development
+      // Use production API URL, fallback to local server for development
       const apiUrl = process.env.NEXT_PUBLIC_API_URL 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/contact`
-        : '/contact';
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/contact`
+        : 'https://api-site-space.onrender.com/api/contact';
         
       const response = await fetch(apiUrl, {
         method: 'POST',
