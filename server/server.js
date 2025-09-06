@@ -152,13 +152,6 @@ app.post('/api/contact', async (req, res) => {
       });
     }
 
-    // Check environment variables
-    if (!MAIN_SPREADSHEET_ID || !BACKUP_SPREADSHEET_ID) {
-      return res.status(500).json({
-        error: 'Configuração do Google Sheets não encontrada'
-      });
-    }
-
     // Prepare data
     const contactData = {
       whatsapp: whatsapp.trim(),
@@ -174,26 +167,21 @@ app.post('/api/contact', async (req, res) => {
       })
     };
 
-    // Ensure sheet exists then create headers if needed
-    await Promise.all([
-      ensureSheetExists(MAIN_SPREADSHEET_ID, SHEET_NAME),
-      ensureSheetExists(BACKUP_SPREADSHEET_ID, SHEET_NAME)
-    ]);
-    await Promise.all([
-      createHeadersIfNeeded(MAIN_SPREADSHEET_ID),
-      createHeadersIfNeeded(BACKUP_SPREADSHEET_ID)
-    ]);
-
-    // Append to both sheets
-    const [mainResult, backupResult] = await Promise.all([
-      appendToSheet(MAIN_SPREADSHEET_ID, contactData),
-      appendToSheet(BACKUP_SPREADSHEET_ID, contactData)
-    ]);
-
-    // Optional email notification
+    // Send email notification
     let emailResult = null;
     if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       emailResult = await sendLeadEmail(contactData);
+      
+      if (!emailResult.success && !emailResult.skipped) {
+        return res.status(500).json({
+          error: 'Erro ao enviar email. Tente novamente em alguns minutos.',
+          details: process.env.NODE_ENV === 'development' ? emailResult.error : undefined
+        });
+      }
+    } else {
+      return res.status(500).json({
+        error: 'Notificações por email não estão habilitadas.'
+      });
     }
 
     res.json({
@@ -201,8 +189,6 @@ app.post('/api/contact', async (req, res) => {
       message: 'Contato salvo com sucesso! Nossa equipe entrará em contato em breve.',
       data: {
         timestamp: contactData.timestamp,
-        mainSheet: mainResult.updates?.updatedRows || 1,
-        backupSheet: backupResult.updates?.updatedRows || 1,
         email: emailResult ? (emailResult.success ? 'sent' : (emailResult.skipped ? 'skipped' : 'failed')) : 'disabled'
       }
     });
