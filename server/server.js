@@ -151,39 +151,64 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
     console.log('  captured pass:', SMTP_CREDENTIALS.pass);
     console.log('  cleaned pass equals captured?', cleanedSMTPPass === SMTP_CREDENTIALS.pass);
     
-    transporter = nodemailer.createTransport({
-      host: SMTP_CREDENTIALS.host || 'smtp.titan.email',
-      port,
-      secure, // true para 465 (SSL), false para 587 (STARTTLS)
-      requireTLS: !secure, // apenas exigir STARTTLS quando não for SSL direto
+    // NUCLEAR OPTION: Create transporter with literal values to bypass any variable corruption
+    console.log('🚨 NUCLEAR TEST - Creating fresh transporter with literal hardcoded values...');
+    
+    const nuclearTransporter = nodemailer.createTransport({
+      host: 'smtp.titan.email',
+      port: 587,
+      secure: false,
+      requireTLS: true,
       tls: {
         rejectUnauthorized: false,
-        // Não defina secureProtocol/ciphers junto com minVersion para evitar conflitos
         minVersion: 'TLSv1.2'
       },
       auth: {
-        user: cleanedSMTPUser,
-        pass: cleanedSMTPPass?.includes('secret') ? (() => { throw new Error('Placeholder password detected in auth!'); })() : cleanedSMTPPass,
+        user: 'contato@spaceapps.com.br',
+        pass: '91246622dK!', // HARDCODED - no variables
         method: 'LOGIN'
       },
-      // Connection timeouts
       connectionTimeout: 60000,
       greetingTimeout: 30000,
       socketTimeout: 60000,
-      debug: process.env.SMTP_DEBUG === 'true', // Ativa logs detalhados
-      logger: process.env.SMTP_DEBUG === 'true'
+      debug: true,
+      logger: true
     });
 
-    // Verificar a conexão antes de iniciar o servidor
-    transporter.verify(function(error, success) {
+    // Test the nuclear transporter first
+    console.log('🧪 Testing nuclear transporter...');
+    nuclearTransporter.verify(function(error, success) {
       if (error) {
-        console.log('❌ Erro na verificação do servidor de email:', error.message);
+        console.log('❌ Nuclear transporter failed:', error.message);
+        console.log('🔄 Falling back to variable-based transporter...');
+        
+        // Fall back to original approach
+        transporter = nodemailer.createTransport({
+          host: SMTP_CREDENTIALS.host || 'smtp.titan.email',
+          port,
+          secure, // true para 465 (SSL), false para 587 (STARTTLS)
+          requireTLS: !secure, // apenas exigir STARTTLS quando não for SSL direto
+          tls: {
+            rejectUnauthorized: false,
+            // Não defina secureProtocol/ciphers junto com minVersion para evitar conflitos
+            minVersion: 'TLSv1.2'
+          },
+          auth: {
+            user: cleanedSMTPUser,
+            pass: cleanedSMTPPass?.includes('secret') ? (() => { throw new Error('Placeholder password detected in auth!'); })() : cleanedSMTPPass,
+            method: 'LOGIN'
+          },
+          // Connection timeouts
+          connectionTimeout: 60000,
+          greetingTimeout: 30000,
+          socketTimeout: 60000,
+          debug: SMTP_CREDENTIALS.debug === 'true', // Ativa logs detalhados
+          logger: SMTP_CREDENTIALS.debug === 'true'
+        });
       } else {
-        console.log('✅ Servidor de email pronto para enviar emails via Titan');
-        console.log('📧 Email transporter configured - Host: %s, Port: %s, User: %s',
-          SMTP_CREDENTIALS.host || 'smtp.titan.email',
-          SMTP_CREDENTIALS.port || 587,
-          maskMiddle(cleanedSMTPUser));
+        console.log('✅ Nuclear transporter SUCCESS! Using hardcoded credentials.');
+        console.log('✅ Nuclear transporter SUCCESS! Using hardcoded credentials.');
+        transporter = nuclearTransporter;
       }
     });
   } catch (err) {
