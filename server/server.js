@@ -4,6 +4,22 @@ const { google } = require('googleapis');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
+// CRITICAL: Capture SMTP credentials IMMEDIATELY before any other env var processing
+const SMTP_CREDENTIALS = {
+  user: process.env.SMTP_USER,
+  pass: process.env.SMTP_PASS,
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: process.env.SMTP_SECURE,
+  debug: process.env.SMTP_DEBUG
+};
+
+console.log('🔒 EARLY CAPTURE - SMTP credentials captured before Google Sheets init:');
+console.log('  SMTP_USER:', SMTP_CREDENTIALS.user);
+console.log('  SMTP_PASS length:', SMTP_CREDENTIALS.pass?.length);
+console.log('  SMTP_PASS preview:', SMTP_CREDENTIALS.pass?.slice(0, 5) + '***');
+console.log('  SMTP_PASS base64:', Buffer.from(SMTP_CREDENTIALS.pass || '').toString('base64').slice(0, 12) + '...');
+
 const app = express();
 const PORT = process.env.PORT || 10000;
 
@@ -82,14 +98,14 @@ let cleanedSMTPPass = null; // Store cleaned pass globally
 
 if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
   try {
-    // Validar se temos as credenciais necessárias
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    // Use the early captured credentials instead of process.env
+    if (!SMTP_CREDENTIALS.user || !SMTP_CREDENTIALS.pass) {
       throw new Error('Credenciais de email não configuradas');
     }
 
-    // Clean and validate credentials globally - force fresh read
-    cleanedSMTPUser = String(process.env.SMTP_USER || '').trim().replace(/['"]/g, '');
-    cleanedSMTPPass = String(process.env.SMTP_PASS || '').trim().replace(/['"]/g, '');
+    // Clean and validate credentials globally - use captured values
+    cleanedSMTPUser = String(SMTP_CREDENTIALS.user || '').trim().replace(/['"]/g, '');
+    cleanedSMTPPass = String(SMTP_CREDENTIALS.pass || '').trim().replace(/['"]/g, '');
     
     // Extra validation - reject if still looks like placeholder
     if (cleanedSMTPPass.includes('secret') || cleanedSMTPPass.includes('/*') || cleanedSMTPPass.includes('*/')) {
@@ -97,18 +113,18 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
     }
     
     // Log credentials for debugging (mask password properly)
-    console.log('🔧 SMTP Debug Info:', {
-      host: process.env.SMTP_HOST || 'smtp.titan.email',
-      port: process.env.SMTP_PORT || 587,
-      secure: process.env.SMTP_SECURE === 'true',
+    console.log('🔧 SMTP Debug Info (using captured values):', {
+      host: SMTP_CREDENTIALS.host || 'smtp.titan.email',
+      port: SMTP_CREDENTIALS.port || 587,
+      secure: SMTP_CREDENTIALS.secure === 'true',
       user: cleanedSMTPUser,
       userLength: cleanedSMTPUser?.length,
       passLength: cleanedSMTPPass?.length,
       passFirst3: cleanedSMTPPass?.slice(0, 3),
       passLast3: cleanedSMTPPass?.slice(-3),
       passHex: Buffer.from(cleanedSMTPPass || '').toString('hex').slice(0, 12) + '...',
-      rawPassLength: process.env.SMTP_PASS?.length,
-      rawPassFirst5: process.env.SMTP_PASS?.slice(0, 5)
+      capturedPassLength: SMTP_CREDENTIALS.pass?.length,
+      capturedPassFirst5: SMTP_CREDENTIALS.pass?.slice(0, 5)
     });
 
     // Validate password doesn't contain comment patterns
@@ -124,19 +140,19 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
     });
 
     // Criar o transporter com TLS estável (evitar opções conflitantes)
-    const secure = process.env.SMTP_SECURE === 'true';
-    const port = parseInt(process.env.SMTP_PORT, 10) || (secure ? 465 : 587);
+    const secure = SMTP_CREDENTIALS.secure === 'true';
+    const port = parseInt(SMTP_CREDENTIALS.port, 10) || (secure ? 465 : 587);
     
     // CRITICAL DEBUG: Log exactly what we're passing to nodemailer
     console.log('🚨 FINAL AUTH DEBUG - Values being passed to createTransport:');
     console.log('  user:', cleanedSMTPUser);
     console.log('  pass length:', cleanedSMTPPass?.length);
     console.log('  pass base64:', Buffer.from(cleanedSMTPPass || '').toString('base64'));
-    console.log('  raw env pass:', process.env.SMTP_PASS);
-    console.log('  cleaned pass equals raw?', cleanedSMTPPass === process.env.SMTP_PASS);
+    console.log('  captured pass:', SMTP_CREDENTIALS.pass);
+    console.log('  cleaned pass equals captured?', cleanedSMTPPass === SMTP_CREDENTIALS.pass);
     
     transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.titan.email',
+      host: SMTP_CREDENTIALS.host || 'smtp.titan.email',
       port,
       secure, // true para 465 (SSL), false para 587 (STARTTLS)
       requireTLS: !secure, // apenas exigir STARTTLS quando não for SSL direto
@@ -165,8 +181,8 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       } else {
         console.log('✅ Servidor de email pronto para enviar emails via Titan');
         console.log('📧 Email transporter configured - Host: %s, Port: %s, User: %s',
-          process.env.SMTP_HOST || 'smtp.titan.email',
-          process.env.SMTP_PORT || 587,
+          SMTP_CREDENTIALS.host || 'smtp.titan.email',
+          SMTP_CREDENTIALS.port || 587,
           maskMiddle(cleanedSMTPUser));
       }
     });
