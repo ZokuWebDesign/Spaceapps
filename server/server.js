@@ -251,7 +251,7 @@ async function createHeadersIfNeeded(spreadsheetId) {
     if (!response.data.values || response.data.values.length === 0) {
       await sheets.spreadsheets.values.update({
         spreadsheetId,
-        range: `${SHEET_NAME}!A1:D1`,
+        range: `${quoteSheetName(SHEET_NAME)}!A1:D1`,
         valueInputOption: 'USER_ENTERED',
         requestBody: {
           values: [
@@ -273,8 +273,9 @@ app.get('/', (req, res) => {
     timestamp: new Date().toISOString(),
     endpoints: {
       'GET /': 'API status',
-      'POST /api/contact': 'Submit contact form',
-      'GET /health': 'Health check'
+      'POST /contact': 'Submit contact form',
+      'GET /health': 'Health check',
+      'POST /email-test': 'Email test (protected)'
     }
   });
 });
@@ -287,7 +288,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.post('/api/contact', async (req, res) => {
+app.post('/contact', async (req, res) => {
   try {
     const { whatsapp, preferredTime } = req.body;
 
@@ -373,7 +374,7 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // Simple protected email test route - requires EMAIL_TEST_KEY env and matching query param key
-app.post('/api/email-test', async (req, res) => {
+app.post('/email-test', async (req, res) => {
   try {
     if (process.env.EMAIL_TEST_KEY && req.query.key !== process.env.EMAIL_TEST_KEY) {
       return res.status(403).json({ error: 'Forbidden' });
@@ -504,7 +505,7 @@ app.post('/api/email-test', async (req, res) => {
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Endpoint não encontrado',
-    availableEndpoints: ['/', '/health', '/api/contact']
+    availableEndpoints: ['/', '/health', '/contact', '/email-test']
   });
 });
 

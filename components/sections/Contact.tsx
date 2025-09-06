@@ -124,8 +124,8 @@ const Contact = () => {
     try {
       // Use environment variable for API URL, fallback to relative path for development
       const apiUrl = process.env.NEXT_PUBLIC_API_URL 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/contact`
-        : '/api/contact';
+        ? `${process.env.NEXT_PUBLIC_API_URL}/contact`
+        : '/contact';
         
       const response = await fetch(apiUrl, {
         method: 'POST',
