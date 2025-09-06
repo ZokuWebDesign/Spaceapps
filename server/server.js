@@ -77,6 +77,9 @@ async function ensureSheetExists(spreadsheetId, sheetName) {
 
 // Email notification setup (global, optional)
 let transporter = null;
+let cleanedSMTPUser = null; // Store cleaned user globally
+let cleanedSMTPPass = null; // Store cleaned pass globally
+
 if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
   try {
     // Validar se temos as credenciais necessárias
@@ -84,29 +87,36 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       throw new Error('Credenciais de email não configuradas');
     }
 
-    // Clean and validate credentials
-    const cleanUser = process.env.SMTP_USER?.trim().replace(/['"]/g, '');
-    const cleanPass = process.env.SMTP_PASS?.trim().replace(/['"]/g, '');
+    // Clean and validate credentials globally
+    cleanedSMTPUser = process.env.SMTP_USER?.trim().replace(/['"]/g, '');
+    cleanedSMTPPass = process.env.SMTP_PASS?.trim().replace(/['"]/g, '');
     
     // Log credentials for debugging (mask password properly)
     console.log('🔧 SMTP Debug Info:', {
       host: process.env.SMTP_HOST || 'smtp.titan.email',
       port: process.env.SMTP_PORT || 587,
       secure: process.env.SMTP_SECURE === 'true',
-      user: cleanUser,
-      userLength: cleanUser?.length,
-      passLength: cleanPass?.length,
-      passFirst3: cleanPass?.slice(0, 3),
-      passLast3: cleanPass?.slice(-3),
-      passHex: Buffer.from(cleanPass || '').toString('hex').slice(0, 12) + '...',
+      user: cleanedSMTPUser,
+      userLength: cleanedSMTPUser?.length,
+      passLength: cleanedSMTPPass?.length,
+      passFirst3: cleanedSMTPPass?.slice(0, 3),
+      passLast3: cleanedSMTPPass?.slice(-3),
+      passHex: Buffer.from(cleanedSMTPPass || '').toString('hex').slice(0, 12) + '...',
       rawPassLength: process.env.SMTP_PASS?.length,
       rawPassFirst5: process.env.SMTP_PASS?.slice(0, 5)
     });
 
     // Validate password doesn't contain comment patterns
-    if (cleanPass?.includes('/*') || cleanPass?.includes('*/') || cleanPass?.includes('secret')) {
+    if (cleanedSMTPPass?.includes('/*') || cleanedSMTPPass?.includes('*/') || cleanedSMTPPass?.includes('secret')) {
       throw new Error('Password appears to contain placeholder text. Check SMTP_PASS environment variable.');
     }
+
+    // Log the actual values being used for auth (debugging)
+    console.log('🔧 Auth values:', {
+      userForAuth: cleanedSMTPUser,
+      passForAuth: cleanedSMTPPass?.slice(0, 3) + '***' + cleanedSMTPPass?.slice(-2),
+      passBase64Preview: Buffer.from(cleanedSMTPPass || '').toString('base64').slice(0, 8) + '...'
+    });
 
     // Criar o transporter com TLS estável (evitar opções conflitantes)
     const secure = process.env.SMTP_SECURE === 'true';
@@ -122,9 +132,9 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
         minVersion: 'TLSv1.2'
       },
       auth: {
-        user: cleanUser,
-        pass: cleanPass,
-  method: 'LOGIN'
+        user: cleanedSMTPUser,
+        pass: cleanedSMTPPass,
+        method: 'LOGIN'
       },
       // Connection timeouts
       connectionTimeout: 60000,
@@ -143,7 +153,7 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
         console.log('📧 Email transporter configured - Host: %s, Port: %s, User: %s',
           process.env.SMTP_HOST || 'smtp.titan.email',
           process.env.SMTP_PORT || 587,
-          maskMiddle(process.env.SMTP_USER));
+          maskMiddle(cleanedSMTPUser));
       }
     });
   } catch (err) {
@@ -171,7 +181,7 @@ async function sendLeadEmail(data) {
     }
 
     console.log('Iniciando tentativa de envio de email...');
-    console.log('De:', process.env.SMTP_USER);
+    console.log('De:', cleanedSMTPUser || process.env.SMTP_USER);
     console.log('Para:', process.env.EMAIL_TO);
     console.log('Dados do lead:', { whatsapp: data.whatsapp, preferredTime: data.preferredTime });
 
@@ -186,7 +196,7 @@ async function sendLeadEmail(data) {
     `;
 
     const info = await transporter.sendMail({
-      from: process.env.SMTP_USER, // Usar apenas o email autorizado como remetente
+      from: cleanedSMTPUser || process.env.SMTP_USER, // Use cleaned credentials
       to: process.env.EMAIL_TO,
       subject,
       text,
@@ -380,7 +390,7 @@ app.post('/api/email-test', async (req, res) => {
     if (transporter) {
       try {
         const info = await transporter.sendMail({
-          from: process.env.SMTP_USER,
+          from: cleanedSMTPUser || process.env.SMTP_USER,
           to,
           subject: 'SpaceApps - Teste de Email',
           text: 'Este é um email de teste do sistema SpaceApps. Se você recebeu esta mensagem, o sistema de email está funcionando corretamente.',
@@ -465,7 +475,7 @@ app.post('/api/email-test', async (req, res) => {
         console.log(`✅ Configuração ${config.name} verificada com sucesso`);
         
         const info = await testTransporter.sendMail({
-          from: process.env.SMTP_USER,
+          from: user,
           to,
           subject: `SpaceApps - Teste ${config.name}`,
           text: `Email de teste usando configuração: ${config.name}`,
