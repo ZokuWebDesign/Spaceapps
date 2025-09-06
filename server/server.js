@@ -113,11 +113,15 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       host: process.env.SMTP_HOST || 'smtp.titan.email',
       port: parseInt(process.env.SMTP_PORT) || 587,
       secure: process.env.SMTP_SECURE === 'true', // true para 465, false para 587
-      // Additional TLS options for problematic servers
+      // Fix SSL handshake issues
       requireTLS: process.env.SMTP_SECURE !== 'true',
       tls: {
-        rejectUnauthorized: false, // Allow self-signed certificates
-        ciphers: 'SSLv3'
+        rejectUnauthorized: false,
+        // Fix for SSL handshake failures
+        secureProtocol: 'TLSv1_2_method',
+        ciphers: 'ALL',
+        minVersion: 'TLSv1.2',
+        maxVersion: 'TLSv1.3'
       },
       auth: {
         user: cleanUser,
@@ -394,41 +398,74 @@ app.post('/api/email-test', async (req, res) => {
     // Try alternative configurations
     const configs = [
       {
-        name: 'Titan 587 STARTTLS',
+        name: 'Titan 587 STARTTLS v1.2',
         host: 'smtp.titan.email',
         port: 587,
         secure: false,
         requireTLS: true,
-        tls: { rejectUnauthorized: false }
+        tls: { 
+          rejectUnauthorized: false,
+          secureProtocol: 'TLSv1_2_method',
+          ciphers: 'ALL'
+        }
       },
       {
-        name: 'Titan 465 SSL',
+        name: 'Titan 465 SSL Legacy',
         host: 'smtp.titan.email',
         port: 465,
         secure: true,
-        tls: { rejectUnauthorized: false }
+        tls: { 
+          rejectUnauthorized: false,
+          secureProtocol: 'TLSv1_method',
+          ciphers: 'ALL'
+        }
       },
       {
-        name: 'HostGator Legacy',
+        name: 'HostGator Direct 587',
         host: 'mail.spaceapps.com.br',
         port: 587,
         secure: false,
         requireTLS: true,
-        tls: { rejectUnauthorized: false }
+        tls: { 
+          rejectUnauthorized: false,
+          secureProtocol: 'TLSv1_2_method'
+        }
       },
       {
-        name: 'HostGator SSL',
+        name: 'HostGator Direct 465',
         host: 'mail.spaceapps.com.br',
         port: 465,
         secure: true,
-        tls: { rejectUnauthorized: false }
+        tls: { 
+          rejectUnauthorized: false,
+          secureProtocol: 'TLSv1_method'
+        }
+      },
+      {
+        name: 'HostGator Server Direct',
+        host: 'gator4171.hostgator.com',
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        tls: { 
+          rejectUnauthorized: false,
+          secureProtocol: 'TLSv1_2_method'
+        }
+      },
+      {
+        name: 'Titan No TLS (Insecure)',
+        host: 'smtp.titan.email',
+        port: 587,
+        secure: false,
+        requireTLS: false,
+        ignoreTLS: true
       }
     ];
 
     for (const config of configs) {
       try {
         console.log(`Testando configuração: ${config.name}`);
-        const testTransporter = nodemailer.createTransport({
+        const testTransporter = nodemailer.createTransporter({
           ...config,
           auth: {
             user: cleanUser,
