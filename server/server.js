@@ -4,6 +4,10 @@ const { google } = require('googleapis');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
+console.log('📦 PACKAGE INFO:');
+console.log('  Node version:', process.version);
+console.log('  Nodemailer version:', require('nodemailer/package.json').version);
+
 // CRITICAL: Capture SMTP credentials IMMEDIATELY before any other env var processing
 const SMTP_CREDENTIALS = {
   user: process.env.SMTP_USER,
@@ -19,6 +23,25 @@ console.log('  SMTP_USER:', SMTP_CREDENTIALS.user);
 console.log('  SMTP_PASS length:', SMTP_CREDENTIALS.pass?.length);
 console.log('  SMTP_PASS preview:', SMTP_CREDENTIALS.pass?.slice(0, 5) + '***');
 console.log('  SMTP_PASS base64:', Buffer.from(SMTP_CREDENTIALS.pass || '').toString('base64').slice(0, 12) + '...');
+
+// CRITICAL: Let's also check if Render has any SMTP environment interference
+console.log('🔍 RENDER ENVIRONMENT AUDIT:');
+console.log('  NODE_ENV:', process.env.NODE_ENV);
+console.log('  All SMTP env vars:');
+Object.keys(process.env).filter(key => key.includes('SMTP')).forEach(key => {
+  console.log(`    ${key}: ${process.env[key]?.slice(0, 10)}...`);
+});
+console.log('  Any email-related env vars:');
+Object.keys(process.env).filter(key => key.toLowerCase().includes('email') || key.toLowerCase().includes('mail')).forEach(key => {
+  console.log(`    ${key}: ${process.env[key]?.slice(0, 10)}...`);
+});
+
+// Test literal string base64 encoding
+const literalPassword = '91246622dK!';
+console.log('🧪 LITERAL PASSWORD TEST:');
+console.log('  Literal password:', literalPassword);
+console.log('  Literal base64:', Buffer.from(literalPassword).toString('base64'));
+console.log('  Should be: OTEyNDY2MjJkSyE=');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
