@@ -177,6 +177,14 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
     // NUCLEAR OPTION: Create transporter with literal values to bypass any variable corruption
     console.log('🚨 NUCLEAR TEST - Creating fresh transporter with literal hardcoded values...');
     
+    // Test if the password is being corrupted immediately
+    const testPassword = '91246622dK!';
+    console.log('🔍 PRE-TRANSPORT PASSWORD TEST:');
+    console.log('  Raw password string:', testPassword);
+    console.log('  Password length:', testPassword.length);
+    console.log('  Password base64:', Buffer.from(testPassword).toString('base64'));
+    console.log('  Expected base64: OTEyNDY2MjJkSyE=');
+    
     const nuclearTransporter = nodemailer.createTransport({
       host: 'smtp.titan.email',
       port: 587,
@@ -188,7 +196,7 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       },
       auth: {
         user: 'contato@spaceapps.com.br',
-        pass: '91246622dK!', // HARDCODED - no variables
+        pass: testPassword, // Using variable to see if assignment corrupts it
         method: 'LOGIN'
       },
       connectionTimeout: 60000,
@@ -197,13 +205,101 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       debug: true,
       logger: true
     });
+    
+    // Check if the transporter object has the correct values
+    console.log('🔍 POST-TRANSPORT PASSWORD CHECK:');
+    console.log('  Transport auth user:', nuclearTransporter.options?.auth?.user);
+    console.log('  Transport auth pass:', nuclearTransporter.options?.auth?.pass);
+    console.log('  Transport auth pass length:', nuclearTransporter.options?.auth?.pass?.length);
+    console.log('  Transport auth pass base64:', Buffer.from(nuclearTransporter.options?.auth?.pass || '').toString('base64'));
 
     // Test the nuclear transporter first
     console.log('🧪 Testing nuclear transporter...');
+    
+    // Additional test: Manual base64 encoding to bypass nodemailer's internal handling
+    console.log('🔬 MANUAL AUTH TEST:');
+    const manualUser = 'contato@spaceapps.com.br';
+    const manualPass = '91246622dK!';
+    const manualUserB64 = Buffer.from(manualUser).toString('base64');
+    const manualPassB64 = Buffer.from(manualPass).toString('base64');
+    console.log('  Manual user base64:', manualUserB64);
+    console.log('  Manual pass base64:', manualPassB64);
+    console.log('  Expected pass base64: OTEyNDY2MjJkSyE=');
+    console.log('  Manual encoding matches expected?', manualPassB64 === 'OTEyNDY2MjJkSyE=');
+    
     nuclearTransporter.verify(function(error, success) {
       if (error) {
         console.log('❌ Nuclear transporter failed:', error.message);
+        
+        // The logs show that even hardcoded '91246622dK!' becomes '/* secret */' in transmission
+        // This indicates either:
+        // 1. Render platform is intercepting and masking SMTP passwords
+        // 2. Nodemailer has a bug that corrupts auth data
+        // 3. Some security feature is replacing passwords with placeholders
+        
+        console.log('� CRITICAL FINDING:');
+        console.log('  Even hardcoded literal "91246622dK!" becomes "/* secret */" in SMTP transmission');
+        console.log('  This suggests platform-level interference or nodemailer bug');
+        console.log('  Base64 "Lyogc2VjcmV0ICov" = "/* secret */" instead of expected "OTEyNDY2MjJkSyE="');
+        
         console.log('🔄 Falling back to variable-based transporter...');
+        
+        // WORKAROUND ATTEMPT: Try alternative auth methods since LOGIN is corrupted
+        console.log('🔧 TRYING ALTERNATIVE AUTH METHODS...');
+        
+        // Try PLAIN auth instead of LOGIN
+        const plainTransporter = nodemailer.createTransporter({
+          host: 'smtp.titan.email',
+          port: 587,
+          secure: false,
+          auth: {
+            user: 'contato@spaceapps.com.br',
+            pass: '91246622dK!',
+            method: 'PLAIN' // Different auth method
+          },
+          debug: true,
+          logger: true
+        });
+        
+        console.log('🧪 Testing PLAIN auth method...');
+        plainTransporter.verify(function(plainError, plainSuccess) {
+          if (plainError) {
+            console.log('❌ PLAIN auth also failed:', plainError.message);
+          } else {
+            console.log('✅ PLAIN auth succeeded! Using PLAIN method.');
+            global.workingTransporter = plainTransporter;
+            return;
+          }
+          
+          // If PLAIN also fails, try without explicit auth method
+          console.log('🔧 TRYING DEFAULT AUTH METHOD...');
+          const defaultTransporter = nodemailer.createTransporter({
+            host: 'smtp.titan.email',
+            port: 587,
+            secure: false,
+            auth: {
+              user: 'contato@spaceapps.com.br',
+              pass: '91246622dK!' // No explicit method
+            },
+            debug: true,
+            logger: true
+          });
+          
+          defaultTransporter.verify(function(defaultError, defaultSuccess) {
+            if (defaultError) {
+              console.log('❌ Default auth also failed:', defaultError.message);
+              console.log('🚨 ALL AUTH METHODS FAILED - This appears to be a platform-level issue');
+              console.log('💡 RECOMMENDATIONS:');
+              console.log('  1. Contact Render support about SMTP password masking');
+              console.log('  2. Try different SMTP provider (SendGrid, Mailgun, etc.)');
+              console.log('  3. Use OAuth2 instead of password auth');
+              console.log('  4. Deploy to different platform to test');
+            } else {
+              console.log('✅ Default auth succeeded! Using default method.');
+              global.workingTransporter = defaultTransporter;
+            }
+          });
+        });
         
         // Fall back to original approach
         transporter = nodemailer.createTransport({
