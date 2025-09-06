@@ -79,52 +79,38 @@ async function ensureSheetExists(spreadsheetId, sheetName) {
 let transporter = null;
 if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
   try {
-    // Sanitize / trim env vars (avoid accidental quotes or spaces)
-    const smtpHost = process.env.SMTP_HOST?.trim();
-    const smtpPort = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT.trim()) : 587;
-    const smtpSecure = process.env.SMTP_SECURE === 'true';
-    const smtpUser = process.env.SMTP_USER?.trim();
-    const smtpPass = process.env.SMTP_PASS?.trim();
-    // Remove wrapping quotes if present in EMAIL_FROM
-    const rawFrom = process.env.EMAIL_FROM?.trim().replace(/^"|"$/g, '');
-    // If display name format "Name <email>", extract address for validation
-    const fromMatch = rawFrom?.match(/<([^>]+)>/);
-    const fromAddress = fromMatch ? fromMatch[1] : rawFrom;
-    let finalFrom = rawFrom;
-    if (!fromAddress || !/@/.test(fromAddress)) {
-      finalFrom = smtpUser; // fallback
-    } else if (smtpUser && fromAddress && fromAddress.toLowerCase() !== smtpUser.toLowerCase()) {
-      // If provider rejects differing sender, fallback to authenticated user keeping display name if any
-      finalFrom = rawFrom?.includes('<') ? rawFrom.replace(fromAddress, smtpUser) : smtpUser;
+    // Validar se temos as credenciais necessárias
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      throw new Error('Credenciais de email não configuradas');
     }
 
+    // Criar o transporter com as configurações corretas do Titan (Hostgator)
     transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpSecure,           // true => implicit TLS (465)
-      requireTLS: !smtpSecure,      // force STARTTLS when not implicit
-      authMethod: 'LOGIN',          // force LOGIN over PLAIN (some providers prefer)
-      auth: (smtpUser && smtpPass) ? { user: smtpUser, pass: smtpPass } : undefined,
-      logger: process.env.SMTP_DEBUG === 'true',
-      debug: process.env.SMTP_DEBUG === 'true'
+      host: process.env.SMTP_HOST || 'smtp.titan.email',
+      port: parseInt(process.env.SMTP_PORT) || 587,
+      secure: process.env.SMTP_SECURE === 'true', // true para 465, false para 587
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      debug: process.env.SMTP_DEBUG === 'true', // Ativa logs detalhados
+      logger: process.env.SMTP_DEBUG === 'true'
     });
 
-    // Expose sanitized finalFrom for use later
-    process.env.__EFFECTIVE_EMAIL_FROM = finalFrom;
-
-    // Light diagnostics (won't expose secrets)
-    transporter.verify().then(() => {
-      console.log('📧 Email transporter verified host=%s port=%s secure=%s user=%s from=%s',
-        smtpHost,
-        smtpPort,
-        smtpSecure,
-        smtpUser ? maskMiddle(smtpUser) : 'none',
-        finalFrom);
-    }).catch(err => {
-      console.warn('⚠️  Email transporter verification failed:', err.message);
+    // Verificar a conexão antes de iniciar o servidor
+    transporter.verify(function(error, success) {
+      if (error) {
+        console.log('❌ Erro na verificação do servidor de email:', error.message);
+      } else {
+        console.log('✅ Servidor de email pronto para enviar emails via Titan');
+        console.log('📧 Email transporter configured - Host: %s, Port: %s, User: %s',
+          process.env.SMTP_HOST || 'smtp.titan.email',
+          process.env.SMTP_PORT || 587,
+          maskMiddle(process.env.SMTP_USER));
+      }
     });
   } catch (err) {
-    console.error('Failed to initialize mail transporter:', err);
+    console.error('❌ Failed to initialize mail transporter:', err.message);
   }
 }
 
@@ -135,30 +121,49 @@ function maskMiddle(str) {
 }
 
 async function sendLeadEmail(data) {
-  if (!transporter) return { skipped: true };
-  if (!process.env.EMAIL_TO || !process.env.EMAIL_FROM) {
-    console.warn('Email notification skipped: EMAIL_TO or EMAIL_FROM missing');
-    return { skipped: true };
-  }
-  const subject = `Novo lead (${data.whatsapp}) - SpaceApps`;
-  const text = `Novo lead capturado\n\nWhatsApp: ${data.whatsapp}\nHorário Preferido: ${data.preferredTime}\nData/Hora: ${data.timestamp}`;
-  const html = `<h2>Novo lead capturado</h2>
-  <ul>
-    <li><strong>WhatsApp:</strong> ${data.whatsapp}</li>
-    <li><strong>Horário Preferido:</strong> ${data.preferredTime}</li>
-    <li><strong>Data/Hora:</strong> ${data.timestamp}</li>
-  </ul>`;
   try {
+    if (!transporter) {
+      console.warn('Email notification skipped: transporter not initialized');
+      return { skipped: true };
+    }
+    
+    // Validar se temos as configurações necessárias
+    if (!process.env.EMAIL_TO || !process.env.SMTP_USER) {
+      console.warn('Email notification skipped: EMAIL_TO or SMTP_USER missing');
+      return { skipped: true };
+    }
+
+    console.log('Iniciando tentativa de envio de email...');
+    console.log('De:', process.env.SMTP_USER);
+    console.log('Para:', process.env.EMAIL_TO);
+    console.log('Dados do lead:', { whatsapp: data.whatsapp, preferredTime: data.preferredTime });
+
+    const subject = `Novo lead (${data.whatsapp}) - SpaceApps`;
+    const text = `Novo lead capturado via https://spaceapps.com.br\n\nWhatsApp: ${data.whatsapp}\nHorário Preferido: ${data.preferredTime}\nData/Hora: ${data.timestamp}`;
+    const html = `
+      <h2>Novo lead capturado via SpaceApps</h2>
+      <p><strong>Website:</strong> https://spaceapps.com.br</p>
+      <p><strong>WhatsApp:</strong> ${data.whatsapp}</p>
+      <p><strong>Horário Preferido:</strong> ${data.preferredTime}</p>
+      <p><strong>Data/Hora:</strong> ${data.timestamp}</p>
+    `;
+
     const info = await transporter.sendMail({
-      from: process.env.__EFFECTIVE_EMAIL_FROM || process.env.EMAIL_FROM || process.env.SMTP_USER,
+      from: process.env.SMTP_USER, // Usar apenas o email autorizado como remetente
       to: process.env.EMAIL_TO,
       subject,
       text,
       html,
     });
+
+    console.log('Email enviado com sucesso:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Error sending lead email:', error);
+    console.error('Erro detalhado no envio de email:', {
+      message: error.message,
+      name: error.name,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
     return { success: false, error: error.message };
   }
 }
@@ -326,18 +331,28 @@ app.post('/api/email-test', async (req, res) => {
     if (process.env.EMAIL_TEST_KEY && req.query.key !== process.env.EMAIL_TEST_KEY) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    if (!transporter) return res.status(400).json({ error: 'Email disabled' });
-    const to = process.env.EMAIL_TO || process.env.EMAIL_FROM;
-    if (!to) return res.status(400).json({ error: 'EMAIL_TO/EMAIL_FROM missing' });
+    if (!transporter) {
+      return res.status(400).json({ error: 'Email transporter not initialized' });
+    }
+    
+    const to = process.env.EMAIL_TO || process.env.SMTP_USER;
+    if (!to) {
+      return res.status(400).json({ error: 'EMAIL_TO or SMTP_USER missing' });
+    }
+
+    console.log('Enviando email de teste...');
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER || to,
+      from: process.env.SMTP_USER,
       to,
-      subject: 'SpaceApps test email',
-      text: 'Email test OK',
+      subject: 'SpaceApps - Teste de Email',
+      text: 'Este é um email de teste do sistema SpaceApps. Se você recebeu esta mensagem, o sistema de email está funcionando corretamente.',
+      html: '<h2>SpaceApps - Teste de Email</h2><p>Este é um email de teste do sistema SpaceApps.</p><p>Se você recebeu esta mensagem, o sistema de email está funcionando corretamente.</p>'
     });
-    res.json({ success: true, id: info.messageId });
+    
+    console.log('Email de teste enviado com sucesso:', info.messageId);
+    res.json({ success: true, messageId: info.messageId });
   } catch (e) {
-    console.error('Email test failed:', e);
+    console.error('Falha no teste de email:', e);
     res.status(500).json({ error: e.message });
   }
 });
