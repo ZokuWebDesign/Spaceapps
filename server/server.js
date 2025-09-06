@@ -84,15 +84,49 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       throw new Error('Credenciais de email não configuradas');
     }
 
+    // Clean and validate credentials
+    const cleanUser = process.env.SMTP_USER?.trim().replace(/['"]/g, '');
+    const cleanPass = process.env.SMTP_PASS?.trim().replace(/['"]/g, '');
+    
+    // Log credentials for debugging (mask password properly)
+    console.log('🔧 SMTP Debug Info:', {
+      host: process.env.SMTP_HOST || 'smtp.titan.email',
+      port: process.env.SMTP_PORT || 587,
+      secure: process.env.SMTP_SECURE === 'true',
+      user: cleanUser,
+      userLength: cleanUser?.length,
+      passLength: cleanPass?.length,
+      passFirst3: cleanPass?.slice(0, 3),
+      passLast3: cleanPass?.slice(-3),
+      passHex: Buffer.from(cleanPass || '').toString('hex').slice(0, 12) + '...',
+      rawPassLength: process.env.SMTP_PASS?.length,
+      rawPassFirst5: process.env.SMTP_PASS?.slice(0, 5)
+    });
+
+    // Validate password doesn't contain comment patterns
+    if (cleanPass?.includes('/*') || cleanPass?.includes('*/') || cleanPass?.includes('secret')) {
+      throw new Error('Password appears to contain placeholder text. Check SMTP_PASS environment variable.');
+    }
+
     // Criar o transporter com as configurações corretas do Titan (Hostgator)
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.titan.email',
       port: parseInt(process.env.SMTP_PORT) || 587,
       secure: process.env.SMTP_SECURE === 'true', // true para 465, false para 587
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+      // Additional TLS options for problematic servers
+      requireTLS: process.env.SMTP_SECURE !== 'true',
+      tls: {
+        rejectUnauthorized: false, // Allow self-signed certificates
+        ciphers: 'SSLv3'
       },
+      auth: {
+        user: cleanUser,
+        pass: cleanPass,
+      },
+      // Connection timeouts
+      connectionTimeout: 60000,
+      greetingTimeout: 30000,
+      socketTimeout: 60000,
       debug: process.env.SMTP_DEBUG === 'true', // Ativa logs detalhados
       logger: process.env.SMTP_DEBUG === 'true'
     });
@@ -331,9 +365,6 @@ app.post('/api/email-test', async (req, res) => {
     if (process.env.EMAIL_TEST_KEY && req.query.key !== process.env.EMAIL_TEST_KEY) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    if (!transporter) {
-      return res.status(400).json({ error: 'Email transporter not initialized' });
-    }
     
     const to = process.env.EMAIL_TO || process.env.SMTP_USER;
     if (!to) {
@@ -341,16 +372,96 @@ app.post('/api/email-test', async (req, res) => {
     }
 
     console.log('Enviando email de teste...');
-    const info = await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to,
-      subject: 'SpaceApps - Teste de Email',
-      text: 'Este é um email de teste do sistema SpaceApps. Se você recebeu esta mensagem, o sistema de email está funcionando corretamente.',
-      html: '<h2>SpaceApps - Teste de Email</h2><p>Este é um email de teste do sistema SpaceApps.</p><p>Se você recebeu esta mensagem, o sistema de email está funcionando corretamente.</p>'
-    });
     
-    console.log('Email de teste enviado com sucesso:', info.messageId);
-    res.json({ success: true, messageId: info.messageId });
+    // Test current transporter first
+    if (transporter) {
+      try {
+        const info = await transporter.sendMail({
+          from: process.env.SMTP_USER,
+          to,
+          subject: 'SpaceApps - Teste de Email',
+          text: 'Este é um email de teste do sistema SpaceApps. Se você recebeu esta mensagem, o sistema de email está funcionando corretamente.',
+          html: '<h2>SpaceApps - Teste de Email</h2><p>Este é um email de teste do sistema SpaceApps.</p><p>Se você recebeu esta mensagem, o sistema de email está funcionando corretamente.</p>'
+        });
+        
+        console.log('Email de teste enviado com sucesso:', info.messageId);
+        return res.json({ success: true, messageId: info.messageId, method: 'current' });
+      } catch (error) {
+        console.error('Current transporter failed:', error.message);
+      }
+    }
+
+    // Try alternative configurations
+    const configs = [
+      {
+        name: 'Titan 587 STARTTLS',
+        host: 'smtp.titan.email',
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        tls: { rejectUnauthorized: false }
+      },
+      {
+        name: 'Titan 465 SSL',
+        host: 'smtp.titan.email',
+        port: 465,
+        secure: true,
+        tls: { rejectUnauthorized: false }
+      },
+      {
+        name: 'HostGator Legacy',
+        host: 'mail.spaceapps.com.br',
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        tls: { rejectUnauthorized: false }
+      },
+      {
+        name: 'HostGator SSL',
+        host: 'mail.spaceapps.com.br',
+        port: 465,
+        secure: true,
+        tls: { rejectUnauthorized: false }
+      }
+    ];
+
+    for (const config of configs) {
+      try {
+        console.log(`Testando configuração: ${config.name}`);
+        const testTransporter = nodemailer.createTransport({
+          ...config,
+          auth: {
+            user: cleanUser,
+            pass: cleanPass,
+          },
+          connectionTimeout: 30000,
+          greetingTimeout: 15000,
+          socketTimeout: 30000,
+        });
+
+        await testTransporter.verify();
+        console.log(`✅ Configuração ${config.name} verificada com sucesso`);
+        
+        const info = await testTransporter.sendMail({
+          from: process.env.SMTP_USER,
+          to,
+          subject: `SpaceApps - Teste ${config.name}`,
+          text: `Email de teste usando configuração: ${config.name}`,
+        });
+        
+        console.log(`Email enviado com ${config.name}:`, info.messageId);
+        return res.json({ 
+          success: true, 
+          messageId: info.messageId, 
+          method: config.name,
+          config: { ...config, auth: 'hidden' }
+        });
+      } catch (error) {
+        console.error(`❌ Configuração ${config.name} falhou:`, error.message);
+      }
+    }
+
+    return res.status(500).json({ error: 'Todas as configurações falharam', details: 'Verifique credenciais e configurações DNS' });
   } catch (e) {
     console.error('Falha no teste de email:', e);
     res.status(500).json({ error: e.message });
