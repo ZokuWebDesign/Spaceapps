@@ -108,24 +108,23 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       throw new Error('Password appears to contain placeholder text. Check SMTP_PASS environment variable.');
     }
 
-    // Criar o transporter com as configurações corretas do Titan (Hostgator)
+    // Criar o transporter com TLS estável (evitar opções conflitantes)
+    const secure = process.env.SMTP_SECURE === 'true';
+    const port = parseInt(process.env.SMTP_PORT, 10) || (secure ? 465 : 587);
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.titan.email',
-      port: parseInt(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === 'true', // true para 465, false para 587
-      // Fix SSL handshake issues
-      requireTLS: process.env.SMTP_SECURE !== 'true',
+      port,
+      secure, // true para 465 (SSL), false para 587 (STARTTLS)
+      requireTLS: !secure, // apenas exigir STARTTLS quando não for SSL direto
       tls: {
         rejectUnauthorized: false,
-        // Fix for SSL handshake failures
-        secureProtocol: 'TLSv1_2_method',
-        ciphers: 'ALL',
-        minVersion: 'TLSv1.2',
-        maxVersion: 'TLSv1.3'
+        // Não defina secureProtocol/ciphers junto com minVersion para evitar conflitos
+        minVersion: 'TLSv1.2'
       },
       auth: {
         user: cleanUser,
         pass: cleanPass,
+  method: 'LOGIN'
       },
       // Connection timeouts
       connectionTimeout: 60000,
@@ -403,22 +402,14 @@ app.post('/api/email-test', async (req, res) => {
         port: 587,
         secure: false,
         requireTLS: true,
-        tls: { 
-          rejectUnauthorized: false,
-          secureProtocol: 'TLSv1_2_method',
-          ciphers: 'ALL'
-        }
+  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
       },
       {
         name: 'Titan 465 SSL Legacy',
         host: 'smtp.titan.email',
         port: 465,
         secure: true,
-        tls: { 
-          rejectUnauthorized: false,
-          secureProtocol: 'TLSv1_method',
-          ciphers: 'ALL'
-        }
+  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
       },
       {
         name: 'HostGator Direct 587',
@@ -426,20 +417,14 @@ app.post('/api/email-test', async (req, res) => {
         port: 587,
         secure: false,
         requireTLS: true,
-        tls: { 
-          rejectUnauthorized: false,
-          secureProtocol: 'TLSv1_2_method'
-        }
+  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
       },
       {
         name: 'HostGator Direct 465',
         host: 'mail.spaceapps.com.br',
         port: 465,
         secure: true,
-        tls: { 
-          rejectUnauthorized: false,
-          secureProtocol: 'TLSv1_method'
-        }
+  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
       },
       {
         name: 'HostGator Server Direct',
@@ -447,10 +432,7 @@ app.post('/api/email-test', async (req, res) => {
         port: 587,
         secure: false,
         requireTLS: true,
-        tls: { 
-          rejectUnauthorized: false,
-          secureProtocol: 'TLSv1_2_method'
-        }
+  tls: { rejectUnauthorized: false, minVersion: 'TLSv1.2' }
       },
       {
         name: 'Titan No TLS (Insecure)',
@@ -462,18 +444,21 @@ app.post('/api/email-test', async (req, res) => {
       }
     ];
 
+    // Preparar credenciais limpas localmente
+    const user = (process.env.SMTP_USER || '').trim().replace(/['"]/g, '');
+    const pass = (process.env.SMTP_PASS || '').trim().replace(/['"]/g, '');
+
     for (const config of configs) {
       try {
         console.log(`Testando configuração: ${config.name}`);
-        const testTransporter = nodemailer.createTransporter({
+        const testTransporter = nodemailer.createTransport({
           ...config,
-          auth: {
-            user: cleanUser,
-            pass: cleanPass,
-          },
+          auth: { user, pass, method: 'LOGIN' },
           connectionTimeout: 30000,
           greetingTimeout: 15000,
           socketTimeout: 30000,
+          debug: process.env.SMTP_DEBUG === 'true',
+          logger: process.env.SMTP_DEBUG === 'true'
         });
 
         await testTransporter.verify();
