@@ -87,9 +87,14 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       throw new Error('Credenciais de email não configuradas');
     }
 
-    // Clean and validate credentials globally
-    cleanedSMTPUser = process.env.SMTP_USER?.trim().replace(/['"]/g, '');
-    cleanedSMTPPass = process.env.SMTP_PASS?.trim().replace(/['"]/g, '');
+    // Clean and validate credentials globally - force fresh read
+    cleanedSMTPUser = String(process.env.SMTP_USER || '').trim().replace(/['"]/g, '');
+    cleanedSMTPPass = String(process.env.SMTP_PASS || '').trim().replace(/['"]/g, '');
+    
+    // Extra validation - reject if still looks like placeholder
+    if (cleanedSMTPPass.includes('secret') || cleanedSMTPPass.includes('/*') || cleanedSMTPPass.includes('*/')) {
+      throw new Error(`Invalid password detected: "${cleanedSMTPPass.slice(0, 10)}..."`);
+    }
     
     // Log credentials for debugging (mask password properly)
     console.log('🔧 SMTP Debug Info:', {
@@ -121,6 +126,15 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
     // Criar o transporter com TLS estável (evitar opções conflitantes)
     const secure = process.env.SMTP_SECURE === 'true';
     const port = parseInt(process.env.SMTP_PORT, 10) || (secure ? 465 : 587);
+    
+    // CRITICAL DEBUG: Log exactly what we're passing to nodemailer
+    console.log('🚨 FINAL AUTH DEBUG - Values being passed to createTransport:');
+    console.log('  user:', cleanedSMTPUser);
+    console.log('  pass length:', cleanedSMTPPass?.length);
+    console.log('  pass base64:', Buffer.from(cleanedSMTPPass || '').toString('base64'));
+    console.log('  raw env pass:', process.env.SMTP_PASS);
+    console.log('  cleaned pass equals raw?', cleanedSMTPPass === process.env.SMTP_PASS);
+    
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.titan.email',
       port,
@@ -133,7 +147,7 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
       },
       auth: {
         user: cleanedSMTPUser,
-        pass: cleanedSMTPPass,
+        pass: cleanedSMTPPass?.includes('secret') ? (() => { throw new Error('Placeholder password detected in auth!'); })() : cleanedSMTPPass,
         method: 'LOGIN'
       },
       // Connection timeouts
