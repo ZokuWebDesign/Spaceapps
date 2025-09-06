@@ -244,11 +244,40 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
         
         console.log('🔄 Falling back to variable-based transporter...');
         
-        // WORKAROUND ATTEMPT: Try alternative auth methods since LOGIN is corrupted
-        console.log('🔧 TRYING ALTERNATIVE AUTH METHODS...');
+        // IMMEDIATE WORKAROUND: Try SendGrid as alternative since SMTP is compromised
+        console.log('🚨 SMTP PASSWORD CORRUPTION DETECTED - TRYING SENDGRID API...');
+        
+        if (process.env.SENDGRID_API_KEY) {
+          console.log('📧 SendGrid API key found, attempting API-based email...');
+          // SendGrid doesn't use SMTP passwords, just API keys
+          const sgMail = require('@sendgrid/mail');
+          sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+          
+          // Test SendGrid
+          const testMsg = {
+            to: 'contato@spaceapps.com.br',
+            from: 'contato@spaceapps.com.br',
+            subject: 'SendGrid Test from SpaceApps',
+            text: 'This is a test to bypass SMTP password corruption'
+          };
+          
+          sgMail.send(testMsg)
+            .then(() => {
+              console.log('✅ SendGrid email sent successfully!');
+              global.emailMethod = 'sendgrid';
+            })
+            .catch((error) => {
+              console.log('❌ SendGrid failed:', error.message);
+            });
+        } else {
+          console.log('⚠️ No SENDGRID_API_KEY found in environment');
+        }
+        
+        // WORKAROUND 2: Try different SMTP providers that might not be affected
+        console.log('🔧 TRYING ALTERNATIVE SMTP PROVIDERS...');
         
         // Try PLAIN auth instead of LOGIN
-        const plainTransporter = nodemailer.createTransporter({
+        const plainTransporter = nodemailer.createTransport({
           host: 'smtp.titan.email',
           port: 587,
           secure: false,
@@ -273,7 +302,7 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
           
           // If PLAIN also fails, try without explicit auth method
           console.log('🔧 TRYING DEFAULT AUTH METHOD...');
-          const defaultTransporter = nodemailer.createTransporter({
+          const defaultTransporter = nodemailer.createTransport({
             host: 'smtp.titan.email',
             port: 587,
             secure: false,
