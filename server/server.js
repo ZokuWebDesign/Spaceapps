@@ -277,7 +277,112 @@ if (process.env.EMAIL_NOTIFICATIONS_ENABLED === 'true') {
         // WORKAROUND 2: Try different SMTP providers that might not be affected
         console.log('🔧 TRYING ALTERNATIVE SMTP PROVIDERS...');
         
-        // Try PLAIN auth instead of LOGIN
+        // Try alternative Titan/HostGator servers
+        const titanConfigs = [
+          {
+            name: 'Titan Primary (Current)',
+            host: 'smtp.titan.email',
+            port: 587,
+            secure: false
+          },
+          {
+            name: 'HostGator Direct Domain',
+            host: 'mail.spaceapps.com.br',
+            port: 587,
+            secure: false
+          },
+          {
+            name: 'HostGator Server Direct',
+            host: 'gator4171.hostgator.com', // Your server
+            port: 587,
+            secure: false
+          },
+          {
+            name: 'Titan SSL Port',
+            host: 'smtp.titan.email',
+            port: 465,
+            secure: true
+          },
+          {
+            name: 'Alternative Titan Server',
+            host: 'mail.titan.email', // Sometimes different subdomain works
+            port: 587,
+            secure: false
+          }
+        ];
+
+        for (const config of titanConfigs) {
+          try {
+            console.log(`🧪 Testing ${config.name}...`);
+            const testTransporter = nodemailer.createTransport({
+              host: config.host,
+              port: config.port,
+              secure: config.secure,
+              auth: {
+                user: 'contato@spaceapps.com.br',
+                pass: '91246622dK!' // Direct hardcode
+              },
+              tls: {
+                rejectUnauthorized: false
+              }
+            });
+
+            testTransporter.verify(function(error, success) {
+              if (error) {
+                console.log(`❌ ${config.name} failed:`, error.message);
+              } else {
+                console.log(`✅ ${config.name} verified successfully!`);
+                global.workingTransporter = testTransporter;
+                return;
+              }
+            });
+
+          } catch (configError) {
+            console.log(`❌ ${config.name} setup failed:`, configError.message);
+          }
+        }
+
+        // WORKAROUND 4: Try base64-encoded password (might bypass platform interference)
+        console.log('🔧 TRYING BASE64-ENCODED PASSWORD...');
+        
+        if (process.env.SMTP_PASS_BASE64) {
+          try {
+            console.log('📧 Testing base64-encoded password...');
+            const decodedPass = Buffer.from(process.env.SMTP_PASS_BASE64, 'base64').toString('utf8');
+            console.log('🔍 Decoded password length:', decodedPass.length);
+            console.log('🔍 Decoded password preview:', decodedPass.substring(0, 3) + '***');
+            
+            const base64Transporter = nodemailer.createTransport({
+              host: 'smtp.titan.email',
+              port: 587,
+              secure: false,
+              auth: {
+                user: 'contato@spaceapps.com.br',
+                pass: decodedPass
+              },
+              tls: {
+                rejectUnauthorized: false
+              }
+            });
+
+            base64Transporter.verify(function(error, success) {
+              if (error) {
+                console.log('❌ Base64 password approach failed:', error.message);
+              } else {
+                console.log('✅ Base64 password approach successful!');
+                global.workingTransporter = base64Transporter;
+                return;
+              }
+            });
+
+          } catch (base64Error) {
+            console.log('❌ Base64 decoding failed:', base64Error.message);
+          }
+        } else {
+          console.log('⚠️ No SMTP_PASS_BASE64 found');
+        }
+        
+        // WORKAROUND 5: Try original approach
         const plainTransporter = nodemailer.createTransport({
           host: 'smtp.titan.email',
           port: 587,
