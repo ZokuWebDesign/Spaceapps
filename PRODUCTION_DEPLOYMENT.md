@@ -1,117 +1,107 @@
-# Production Deployment Guide
+# Production Deployment
 
-## 🚀 Static Site + Render API Deployment
+## Architecture
 
-Since you're using `output: 'export'` for static site generation, your Next.js API routes won't work in production. Here's how to deploy properly:
+The site ships as **two independently deployed pieces**:
 
-### 📋 **Architecture:**
-- **Frontend (Static)**: Netlify/Vercel/GitHub Pages (Free)
-- **Backend (API)**: Render.com (Free tier available)
+| Piece | What it is | Where it runs |
+|---|---|---|
+| **Front-end** | Next.js 14 App Router, statically exported (`output: 'export'`) to `dist/` | Any static host — production served from cPanel/Apache |
+| **Contact API** | Standalone Express service in [`server/`](server/) | Render |
 
----
+**Why they are separate:** `next.config.js` sets `output: 'export'`, which emits a fully static
+site. Next.js API routes are **not** included in a static export, so form handling cannot live in
+`app/api/`. All submissions are posted to the Express service instead.
 
-## 🎯 **Step 1: Create Separate API Project for Render**
-
-Create a standalone Express.js API that you can deploy to Render:
-
-### File Structure:
-```
-server/
-├── package.json
-├── server.js
-├── .env
-└── README.md
-```
+> `app/api/contact/route.ts` is an empty placeholder left over from an earlier approach.
+> It is not built, not served, and not used. The live handler is `server/server.js`.
 
 ---
 
-## 🛠️ **Step 2: Render Deployment**
+## Front-end
 
-### 2.1 Create Render Account
-1. Go to [render.com](https://render.com)
-2. Sign up with GitHub
-3. It's free for the first 750 hours/month
+### Build
 
-### 2.2 Deploy API to Render
-1. Push your API code to a GitHub repo
-2. Connect the repo to Render
-3. Set environment variables in Render dashboard
-4. Your API will be available at: `https://your-app-name.onrender.com`
-
----
-
-## 🌐 **Step 3: Environment Variables for Production**
-
-### For Static Site (.env.local):
 ```bash
-# Production API URL (will be your Render URL)
-NEXT_PUBLIC_API_URL=https://your-api-name.onrender.com
-
-# Development
-# NEXT_PUBLIC_API_URL=http://localhost:3000
+npm install
+npm run build     # → dist/
 ```
 
-### For Render API (.env in Render dashboard):
+> ⚠️ `npm run build` runs `npm run clean` first, which calls **PowerShell**
+> (`build-clean.ps1`). On Linux, macOS or CI, use the portable path instead:
+>
+> ```bash
+> npm run clean:fallback && npx next build
+> ```
+
+### Deploy
+
+Upload the contents of `dist/` to the web root. The export is plain HTML/CSS/JS —
+no Node runtime is required on the web host.
+
+`trailingSlash: true` is set so directory-style URLs (`/termos/`) resolve correctly on
+Apache and other static servers.
+
+### Environment
+
 ```bash
-GOOGLE_SHEETS_CLIENT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
-GOOGLE_SHEETS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYour_Private_Key_Here\n-----END PRIVATE KEY-----"
-GOOGLE_SHEETS_MAIN_ID=your_main_spreadsheet_id_here
-GOOGLE_SHEETS_BACKUP_ID=your_backup_spreadsheet_id_here
+# .env.local — baked in at build time, so rebuild after changing it
+NEXT_PUBLIC_API_URL=https://api-site-space.onrender.com
+```
+
+If unset, the client falls back to the hard-coded Render URL in
+`components/sections/Contact.tsx`.
+
+---
+
+## Contact API
+
+Deployed from [`server/`](server/) as its own Render Web Service.
+
+| Setting | Value |
+|---|---|
+| Root directory | `server` |
+| Build command | `npm install` |
+| Start command | `npm start` |
+| Node | ≥ 18 |
+
+### Environment
+
+```bash
+# Google Sheets (service account — see GOOGLE_SHEETS_SETUP.md)
+GOOGLE_SHEETS_CLIENT_EMAIL=<service-account>@<project>.iam.gserviceaccount.com
+GOOGLE_SHEETS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+GOOGLE_SHEETS_MAIN_ID=<spreadsheet id>
+GOOGLE_SHEETS_BACKUP_ID=<spreadsheet id>
+
+# Mailgun notifications
+EMAIL_NOTIFICATIONS_ENABLED=true
+MAILGUN_API_KEY=<key>
+MAILGUN_DOMAIN=<domain>                     # must match the From: domain
+MAILGUN_BASE_URL=https://api.mailgun.net    # optional; api.eu.mailgun.net for EU
+EMAIL_TO=a@example.com,b@example.com        # comma-separated
+
 PORT=10000
 ```
 
----
+Each submission is written to **both** spreadsheets. The writes are independent — if one
+spreadsheet fails, the other still succeeds and the response reports per-sheet status.
+Missing sheet tabs and header rows are created automatically on first write.
 
-## 🚀 **Step 4: Static Site Deployment Options**
+### Endpoints
 
-### Option A: Netlify (Recommended)
-1. Build: `npm run build`
-2. Drag & drop `dist` folder to Netlify
-3. Set environment variable: `NEXT_PUBLIC_API_URL=https://your-api.onrender.com`
+| Method | Path | Purpose |
+|---|---|---|
+| `POST` | `/contact` | Capture a lead — requires `whatsapp` and `preferredTime` |
+| `POST` | `/email-test` | Send a test notification |
+| `GET` | `/health` | Report status and whether Mailgun / Sheets are configured |
 
-### Option B: Vercel
-1. Connect GitHub repo
-2. Set build command: `npm run build`
-3. Set output directory: `dist`
-4. Add environment variable
-
-### Option C: GitHub Pages
-1. Upload `dist` folder contents
-2. Use GitHub Actions for auto-deployment
-
----
-
-## 💰 **Cost Breakdown:**
-- **Render API**: Free (750 hours/month, sleeps after 15min inactivity)
-- **Static Hosting**: Free on most platforms
-- **Total**: $0/month
-
----
-
-## ⚡ **Alternative: Serverless Functions**
-
-If you want everything in one place:
-
-### Netlify Functions:
-- Deploy static site to Netlify
-- Convert API route to Netlify Function
-- All in one place, still free
-
-### Vercel Functions:
-- Deploy to Vercel
-- Keep API routes (they become serverless functions)
-- Simpler setup, but tied to Vercel
-
----
-
-## 🔧 **Quick Start Commands:**
+### Verify a deploy
 
 ```bash
-# Build static site
-npm run build
-
-# The dist folder contains your static site
-# Deploy this folder to any static hosting
+curl https://api-site-space.onrender.com/health
+# {"status":"ok","services":{"mailgun":"configured","googleSheets":"configured"}}
 ```
 
-Choose your preferred deployment method and I'll help you set it up!
+> On Render's free tier the service sleeps after ~15 minutes idle, so the first request
+> after a quiet period can take several seconds to respond.
