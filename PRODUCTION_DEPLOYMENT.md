@@ -24,15 +24,14 @@ site. Next.js API routes are **not** included in a static export, so form handli
 
 ```bash
 npm install
-npm run build     # → dist/
+npm run build     # Linux/WSL (default) → dist/
 ```
 
-> ⚠️ `npm run build` runs `npm run clean` first, which calls **PowerShell**
-> (`build-clean.ps1`). On Linux, macOS or CI, use the portable path instead:
->
-> ```bash
-> npm run clean:fallback && npx next build
-> ```
+On Windows PowerShell, use the Windows-specific build command:
+
+```powershell
+npm run build:windows
+```
 
 ### Deploy
 

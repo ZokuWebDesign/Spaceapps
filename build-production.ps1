@@ -15,7 +15,7 @@ $env:NEXT_PUBLIC_API_URL = $ApiUrl
 if (-not $SkipBuild) {
     Write-Host "🔨 Building static site..." -ForegroundColor Yellow
     try {
-        npm run build
+        npm run build:windows
         if ($LASTEXITCODE -eq 0) {
             Write-Host "✅ Static site built successfully!" -ForegroundColor Green
         } else {
