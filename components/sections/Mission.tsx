@@ -61,7 +61,7 @@ const Mission = () => {
         >
           <div className="w-full h-full">
             <img 
-              src="https://i.ibb.co/ns8WjbcY/mission.webp"
+              src="https://cdn.sydapp.com.br/spaceapps.com.br/mission.webp"
               alt="Mission Planning Illustration"
               className="w-full h-full object-cover rounded-lg"
             />

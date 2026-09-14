@@ -9,49 +9,49 @@ const teamMembers = [
   {
     name: "Davi Mendes",
     position: "CEO",
-    image: "https://i.ibb.co/Y4KGhF3C/davi.webp",
+    image: "https://cdn.sydapp.com.br/spaceapps.com.br/davi.webp",
     linkedin: "https://www.linkedin.com/in/davi-mendes-36888323b/"
   },
   {
     name: "Gabriel Lennon",
     position: "CTO",
-    image: "https://i.ibb.co/Q7HgBQjk/gabriel.webp",
+    image: "https://cdn.sydapp.com.br/spaceapps.com.br/gabriel.webp",
     linkedin: "https://www.linkedin.com/in/gabriel-lenon-802026217/"
   },
   {
     name: "José Thiago C. Araújo",
     position: "PM/SM",
-    image: "https://i.ibb.co/845XKNcS/thiago.webp",
+    image: "https://cdn.sydapp.com.br/spaceapps.com.br/thiago.webp",
     linkedin: "https://www.linkedin.com/in/josethiagoreal/"
   },
   {
     name: "Eliezer Ordonez",
     position: "DEV Bubble",
-    image: "https://i.ibb.co/vGs0Nd5/eliezer.webp",
+    image: "https://cdn.sydapp.com.br/spaceapps.com.br/eliezer.webp",
     linkedin: "https://www.linkedin.com/in/eliezer-ordonez/"
   },
   {
     name: "Juan Pablo",
     position: "Ux/Ui Designer",
-    image: "https://i.ibb.co/nqvqWCFP/juan.webp",
+    image: "https://cdn.sydapp.com.br/spaceapps.com.br/juan.webp",
     linkedin: "https://www.linkedin.com/in/jaypy06/"
   },
   {
     name: "Frank William",
     position: "DEV Bubble",
-    image: "https://i.ibb.co/MDmV1dHw/frank.webp",
+    image: "https://cdn.sydapp.com.br/spaceapps.com.br/frank.webp",
     linkedin: "https://www.linkedin.com/in/frankwilliam/"
   },
   {
     name: "David Ferreira",
     position: "DEV Full Stack",
-    image: "https://i.ibb.co/k20vN0zT/david.webp",
+    image: "https://cdn.sydapp.com.br/spaceapps.com.br/david.webp",
     linkedin: "https://www.linkedin.com/in/davidferreiraspace/"
   },
   {
     name: "João",
     position: "DEV Full Stack",
-    image: "https://i.ibb.co/N2Yj9zJ9/placeholder.webp",
+    image: "https://cdn.sydapp.com.br/spaceapps.com.br/placeholder.webp",
     linkedin: "https://www.linkedin.com/in/joaospace/"
   }
 ];

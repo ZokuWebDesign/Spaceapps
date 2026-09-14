@@ -122,7 +122,7 @@ const Hero = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-t from-primary via-transparent to-transparent z-10"></div>
               <img
-                src={'https://i.ibb.co/CK32wSpC/hero.webp'}
+                src={'https://cdn.sydapp.com.br/spaceapps.com.br/hero.webp'}
                 alt="Dashboard Preview"
                 className="w-full h-auto object-contain rounded-lg shadow-2xl"
               />

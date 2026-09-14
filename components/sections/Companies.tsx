@@ -9,7 +9,7 @@ const Companies = () => {
   const t = useTranslations();
   // Company logos data with image sources
   const companies = [
-    { logo: "https://i.ibb.co/Gf2LBBgy/unimed.webp", alt: "Unimed Logo" },
+    { logo: "https://cdn.sydapp.com.br/spaceapps.com.br/unimed.webp", alt: "Unimed Logo" },
     { logo: "/assets/logo/allprice.svg", alt: "Allprice Logo" },
     { logo: "/assets/logo/viphostel.svg", alt: "VipHostel Logo" },
     { logo: "/assets/logo/celus.svg", alt: "Celus Logo" },
@@ -24,17 +24,17 @@ const Companies = () => {
     { logo: "/assets/logo/jusprod.svg", alt: "Jusprod Logo" },
     { logo: "/assets/logo/workflow.svg", alt: "Workflow Systems Logo" },
     { logo: "/assets/logo/meconta.svg", alt: "meconta Logo" },
-    { logo: "https://i.ibb.co/BHXkmc4y/miaki.webp", alt: "Universidade Miaki Logo" },
+    { logo: "https://cdn.sydapp.com.br/spaceapps.com.br/miaki.webp", alt: "Universidade Miaki Logo" },
     { logo: "/assets/logo/superselos.svg", alt: "SuperSelos Logo" },
     { logo: "/assets/logo/tatalogos.svg", alt: "TataLogos Logo" },
     { logo: "/assets/logo/fans.svg", alt: "Fans Logo" },
     { logo: "/assets/logo/techlideres.svg", alt: "TechLíderes Logo" },
-    { logo: "https://i.ibb.co/Xxsr3ZfY/qualydent.webp", alt: "QualyDent Logo" },
+    { logo: "https://cdn.sydapp.com.br/spaceapps.com.br/qualydent.webp", alt: "QualyDent Logo" },
     { logo: "/assets/logo/monew.svg", alt: "MONEW Logo" },
     { logo: "/assets/logo/carcode.svg", alt: "CarCode Logo" },
     { logo: "/assets/logo/everpetz.svg", alt: "EverPetz Logo" },
     { logo: "/assets/logo/sbd.svg", alt: "SBD Shine Bright Day Logo" },
-    { logo: "https://i.ibb.co/TMd7Npgf/clinicarocha.webp", alt: "Clínica Rocha Logo" },
+    { logo: "https://cdn.sydapp.com.br/spaceapps.com.br/clinicarocha.webp", alt: "Clínica Rocha Logo" },
     { logo: "/assets/logo/direitoapp.svg", alt: "DireitoApp Logo" },
     { logo: "/assets/logo/bankmy.svg", alt: "bankmy Logo" }
   ];

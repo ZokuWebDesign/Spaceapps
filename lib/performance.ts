@@ -4,8 +4,8 @@ export const initPerformanceOptimizations = () => {
 
   // Preload critical images
   const criticalImages = [
-    'https://i.imgur.com/mqDrhio.jpeg', // Hero background
-    'https://i.imgur.com/IsqWKo2.jpeg', // App preview
+    'https://cdn.sydapp.com.br/spaceapps.com.br/mqDrhio.webp', // Hero background
+    'https://cdn.sydapp.com.br/spaceapps.com.br/IsqWKo2.webp', // App preview
   ];
 
   criticalImages.forEach(src => {

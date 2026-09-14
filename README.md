@@ -4,7 +4,7 @@ Welcome to **SpaceApps – We develop your software to reach space**, a software
 
 You can access the [project's live website here](https://spaceapps.com.br/).
 
-![Project's Cover](https://i.imgur.com/XRKNqUD.png)
+![Project's Cover](https://cdn.sydapp.com.br/spaceapps.com.br/XRKNqUD.webp)
 
 > Each stage is like a rocket component being carefully assembled for takeoff. From initial understanding to final delivery, we follow a structured process in clear and well-defined phases.
 
