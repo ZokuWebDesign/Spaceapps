@@ -80,7 +80,7 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="relative flex flex-col items-center gap-4 pt-[80px] pb-[64px] text-white overflow-hidden select-none">
+    <section id="depoimentos" className="relative flex flex-col items-center gap-4 pt-[80px] pb-[64px] text-white overflow-hidden select-none scroll-mt-20">
           
       {/* Header Section */}
       <div className="flex flex-col items-center w-full max-w-[958px] gap-6 lg:gap-8 px-4 lg:px-0">

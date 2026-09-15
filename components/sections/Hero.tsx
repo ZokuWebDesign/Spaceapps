@@ -8,7 +8,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 const Hero = () => {
   const t = useTranslations();
   return (
-    <section id="inicio" className="relative min-h-screen overflow-hidden">
+    <section id="inicio" className="relative min-h-screen overflow-hidden scroll-mt-20">
       {/* Background Illustrations Container with Width Limit */}
       <div className="absolute inset-0 flex justify-center">
         <div className="relative w-full max-w-7xl h-full">

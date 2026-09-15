@@ -127,8 +127,11 @@ export const en = {
       },
       success: {
         title: "Success! 🎉",
-        message: "Form submitted successfully!"
+        message: "Form submitted successfully!",
+        description: "We received your information. Our team will get in touch via WhatsApp at your preferred time!",
+        sendAnother: "Send another contact"
       },
+      sendingMessage: "Sending your information...",
       error: {
         title: "Error",
         genericMessage: "Error sending form",

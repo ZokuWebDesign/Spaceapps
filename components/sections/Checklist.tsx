@@ -91,8 +91,9 @@ const Checklist = () => {
 
   return (
     <section 
+      id="checklist"
       ref={sectionRef}
-      className="py-20"
+      className="py-20 scroll-mt-20"
     >
       <div className="flex flex-col gap-8 max-w-7xl mx-auto">
         {/* Title Section */}

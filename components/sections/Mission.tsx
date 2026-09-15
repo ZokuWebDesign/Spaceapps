@@ -28,8 +28,9 @@ const Mission = () => {
 
   return (
     <section 
+      id="planejamento"
       ref={sectionRef}
-      className="relative min-h-screen backdrop-blur-sm"
+      className="relative min-h-screen backdrop-blur-sm scroll-mt-20"
       style={{
         background: 'linear-gradient(139deg, rgba(255, 255, 255, 0.04) -6.39%, rgba(143, 143, 143, 0.02) 112.17%)'
       }}

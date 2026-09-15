@@ -7,7 +7,7 @@ import ComoFunciona from "@/components/sections/Mission";
 import FeatureImageTwo from "@/components/sections/Checklist";
 import Contact from "@/components/sections/Contact";
 import Testimonials from "@/components/sections/Testimonials";
-import FAQ from "@/components/sections/Team";
+import Team from "@/components/sections/Team";
 import Footer from "@/components/sections/Footer";
 
 export default function Page() {
@@ -24,7 +24,7 @@ export default function Page() {
       {/*
       <Testimonials />
       */}
-      <FAQ />
+      <Team />
       <Footer />
     </div>
   );

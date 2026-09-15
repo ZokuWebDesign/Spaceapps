@@ -68,7 +68,7 @@ const Footer = () => {
                     </a>
                   </li>
                   <li>
-                    <a href="#sobre" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                    <a href="#sobre-nos" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
                       {t.footer.navigation.about}
                     </a>
                   </li>
@@ -88,7 +88,7 @@ const Footer = () => {
                     </a>
                   </li>
                   <li>
-                    <a href="#equipe" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                    <a href="#quem-faz-parte" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
                       {t.footer.navigation.team}
                     </a>
                   </li>
@@ -102,11 +102,13 @@ const Footer = () => {
                       {t.footer.navigation.crew}
                     </a>
                   </li>
+                  {/*
                   <li>
-                    <a href="#faq" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
+                    <a href="#faqs" className="text-white/70 text-lg hover:text-cyan-400 transition-colors">
                       {t.footer.navigation.faq}
                     </a>
                   </li>
+                  */}
                 </ul>
               </div>
               {/* Social Links */}

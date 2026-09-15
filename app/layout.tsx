@@ -11,7 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt">
+    <html lang="pt" className="scroll-smooth">
       <head>
         <AnalyticsHead />
         <link rel="preconnect" href="https://www.googletagmanager.com" />

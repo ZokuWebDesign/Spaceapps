@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations } from '@/hooks/useTranslations';
+import { Loader2, CheckCircle2 } from "lucide-react";
 
 // Helper function to format WhatsApp number
 const formatWhatsApp = (value: string) => {
@@ -81,12 +82,14 @@ const Contact = () => {
     preferredTime: z
       .string()
       .min(1, t.contact.form.validation.timeRequired)
-      .max(10, t.contact.form.validation.timeMaxLength),
+      .max(50, t.contact.form.validation.timeMaxLength),
   });
 
   type ContactFormData = z.infer<typeof contactSchema>;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
   const [whatsappValue, setWhatsappValue] = useState("");
   const { toast } = useToast();
   
@@ -112,43 +115,55 @@ const Contact = () => {
   const resetForm = () => {
     reset();
     setWhatsappValue("");
+    setHoneypot("");
   };
 
   const onSubmit = async (data: ContactFormData) => {
+    // Bot mitigation via honeypot
+    if (honeypot) {
+      setIsSubmitted(true);
+      return;
+    }
+
     setIsSubmitting(true);
     // Immediate feedback toast while request is in-flight
     const submittingToast = toast({
       title: t.contact.form.submittingButton,
-      description: (t as any)?.contact?.form?.sendingMessage || 'Enviando suas informações...'
+      description: t.contact.form.sendingMessage || 'Enviando suas informações...'
     });
+
     try {
-      // Use production API URL, fallback to local server for development
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/contact`
-        : 'https://api-site-space.onrender.com/api/contact';
+      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL ||
+        (process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api/contact` : 'https://n8n.psiativa.com.br/webhook/spaceapps-lead');
         
-      const response = await fetch(apiUrl, {
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          whatsapp: data.whatsapp,
+          preferredTime: data.preferredTime,
+          source: 'spaceapps.com.br',
+          page: typeof window !== 'undefined' ? window.location.pathname : '/'
+        }),
       });
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
 
-      if (response.ok) {
-        submittingToast.dismiss();
+      submittingToast.dismiss();
+
+      if (response.ok && result.success !== false) {
+        setIsSubmitted(true);
         toast({
           title: t.contact.form.success.title,
-          description: result.message || t.contact.form.success.message,
+          description: t.contact.form.success.message,
         });
-        resetForm(); // Clear form and state
+        resetForm();
       } else {
-        submittingToast.dismiss();
         toast({
           title: t.contact.form.error.title,
-          description: result.error || t.contact.form.error.genericMessage,
+          description: result.error || result.message || t.contact.form.error.genericMessage,
           variant: "destructive",
         });
       }
@@ -163,15 +178,16 @@ const Contact = () => {
       setIsSubmitting(false);
     }
   };
+
   return (
-    <section className="flex flex-col items-center max-w-7xl mx-auto px-4 lg:px-14 pt-[100px] pb-[50px]">
+    <section id="contato" className="flex flex-col items-center max-w-7xl mx-auto px-4 lg:px-14 pt-[100px] pb-[50px] scroll-mt-20">
 
         {/* Main content container with gradient background and border */}
         <div 
-          className="flex flex-col-reverse justify-start items-center gap-8 relative max-w-[998px] h-[580px] lg:h-[560px] px-4 lg:px-[80px] py-[28px] rounded-[6px] bg-gradient-to-br from-white/10 to-gray-500/20 border border-tertiary backdrop-blur-sm overflow-visible"
+          className="flex flex-col-reverse justify-start items-center gap-8 relative max-w-[998px] min-h-[580px] lg:min-h-[560px] h-auto px-4 lg:px-[80px] py-[28px] rounded-[6px] bg-gradient-to-br from-white/10 to-gray-500/20 border border-tertiary backdrop-blur-sm overflow-visible"
         >
           {/* Header Section */}
-          <div className="text-center">
+          <div className="text-center w-full">
             {/* Logo */}
             <div className="flex justify-center -mb-6">
               <img 
@@ -182,7 +198,7 @@ const Contact = () => {
             </div>
 
             {/* Title and Description */}
-            <div className="flex flex-col max-w-[720px] gap-2 lg:gap-4 mb-8">
+            <div className="flex flex-col max-w-[720px] mx-auto gap-2 lg:gap-4 mb-8">
               <h1 className="text-white lg:leading-[68px]">
                 {t.contact.title}
               </h1>
@@ -192,69 +208,113 @@ const Contact = () => {
               />
             </div>
 
-            {/* Form Row */}
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-4 items-end">
-              {/* WhatsApp Input */}
-              <div className="flex-1 w-full">
-                <div 
-                  className={`h-[64px] rounded-[6px] px-3 flex items-center border ${
-                    errors.whatsapp ? 'border-red-500' : 'border-[#f63e84]'
-                  }`}
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(143, 143, 143, 0.21) 100%)'
-                  }}
-                >
-                  <input
-                    {...register("whatsapp")}
-                    type="tel"
-                    placeholder={t.contact.form.whatsappPlaceholder}
-                    value={whatsappValue}
-                    onChange={handleWhatsAppChange}
-                    className="w-full bg-transparent text-white text-[20px] placeholder-white outline-none"
-                    disabled={isSubmitting}
-                    maxLength={20}
-                  />
+            {/* Form Row or Success State */}
+            {isSubmitted ? (
+              <div className="flex flex-col items-center justify-center p-6 sm:p-8 bg-white/5 border border-[#f63e84]/40 rounded-[12px] max-w-lg mx-auto backdrop-blur-md animate-in fade-in zoom-in-95 duration-300">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center mb-4 text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.35)]">
+                  <CheckCircle2 className="w-9 h-9 text-emerald-400" />
                 </div>
-                {errors.whatsapp && (
-                  <p className="text-red-400 text-sm mt-1 px-1">{errors.whatsapp.message}</p>
-                )}
-              </div>
-
-              {/* Time Input */}
-              <div className="w-full md:w-[200px]">
-                <div 
-                  className={`h-[64px] rounded-[6px] px-3 flex items-center border ${
-                    errors.preferredTime ? 'border-red-500' : 'border-[#f63e84]'
-                  }`}
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(143, 143, 143, 0.21) 100%)'
-                  }}
-                >
-                  <input
-                    {...register("preferredTime")}
-                    type="text"
-                    placeholder={t.contact.form.timePlaceholder}
-                    className="w-full bg-transparent text-white text-[20px] placeholder-white outline-none"
-                    disabled={isSubmitting}
-                  />
-                </div>
-                {errors.preferredTime && (
-                  <p className="text-red-400 text-sm mt-1 px-1">{errors.preferredTime.message}</p>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              <div className="w-full md:w-[245px]">
+                <h3 className="text-white text-2xl font-bold mb-2">
+                  {t.contact.form.success.title}
+                </h3>
+                <p className="text-gray-200 text-sm sm:text-base max-w-md mx-auto mb-6 text-center leading-relaxed">
+                  {t.contact.form.success.description}
+                </p>
                 <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full"
-                  disabled={isSubmitting}
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsSubmitted(false);
+                    resetForm();
+                  }}
+                  className="border-[#f63e84] text-white hover:bg-[#f63e84]/20 hover:text-white text-sm font-semibold tracking-wider h-[46px] px-6"
                 >
-                  {isSubmitting ? t.contact.form.submittingButton : t.contact.form.submitButton}
+                  {t.contact.form.success.sendAnother}
                 </Button>
               </div>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-4 items-end max-w-[850px] mx-auto">
+                {/* Honeypot field for bot mitigation */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  className="opacity-0 absolute -z-10 w-0 h-0 pointer-events-none"
+                  aria-hidden="true"
+                />
+
+                {/* WhatsApp Input */}
+                <div className="flex-1 w-full">
+                  <div 
+                    className={`h-[64px] rounded-[6px] px-3 flex items-center border ${
+                      errors.whatsapp ? 'border-red-500' : 'border-[#f63e84]'
+                    }`}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(143, 143, 143, 0.21) 100%)'
+                    }}
+                  >
+                    <input
+                      {...register("whatsapp")}
+                      type="tel"
+                      placeholder={t.contact.form.whatsappPlaceholder}
+                      value={whatsappValue}
+                      onChange={handleWhatsAppChange}
+                      className="w-full bg-transparent text-white text-[20px] placeholder-white outline-none"
+                      disabled={isSubmitting}
+                      maxLength={20}
+                    />
+                  </div>
+                  {errors.whatsapp && (
+                    <p className="text-red-400 text-sm mt-1 px-1 text-left">{errors.whatsapp.message}</p>
+                  )}
+                </div>
+
+                {/* Time Input */}
+                <div className="w-full md:w-[200px]">
+                  <div 
+                    className={`h-[64px] rounded-[6px] px-3 flex items-center border ${
+                      errors.preferredTime ? 'border-red-500' : 'border-[#f63e84]'
+                    }`}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(143, 143, 143, 0.21) 100%)'
+                    }}
+                  >
+                    <input
+                      {...register("preferredTime")}
+                      type="text"
+                      placeholder={t.contact.form.timePlaceholder}
+                      className="w-full bg-transparent text-white text-[20px] placeholder-white outline-none"
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  {errors.preferredTime && (
+                    <p className="text-red-400 text-sm mt-1 px-1 text-left">{errors.preferredTime.message}</p>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <div className="w-full md:w-[245px]">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>{t.contact.form.submittingButton}</span>
+                      </>
+                    ) : (
+                      <span>{t.contact.form.submitButton}</span>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
     </section>

@@ -90,7 +90,7 @@ const Team = () => {
   };
 
   return (
-    <section className="pt-[50px] pb-[97px]">
+    <section id="tripulacao" className="pt-[50px] pb-[97px] scroll-mt-20">
       <div className="flex flex-col gap-6 lg:gap-8 max-w-[1280px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col gap-6 lg:gap-8 text-center items-center max-w-[868px] mx-auto px-4">

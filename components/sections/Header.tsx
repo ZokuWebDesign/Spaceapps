@@ -95,9 +95,11 @@ const Header = () => {
                 <a href="#tripulacao" className="nav-link">
                   {t.header.navigation.crew}
                 </a>
+                {/*
                 <a href="#faqs" className="nav-link">
                   {t.header.navigation.faqs}
                 </a>
+                */}
               </nav>
 
               {/* Language Selector */}
@@ -233,11 +235,17 @@ const Header = () => {
                     </button>
                   </div>
                   <div className="h-[44px] w-[127px] mx-auto">
-                    <img
-                      src="/assets/logo/logo-header.svg"
-                      alt="SPACEAPPS Logo"
-                      className="w-full h-full object-contain"
-                    />
+                    <a
+                      href="#inicio"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full h-full block"
+                    >
+                      <img
+                        src="/assets/logo/logo-header.svg"
+                        alt="SPACEAPPS Logo"
+                        className="w-full h-full object-contain"
+                      />
+                    </a>
                   </div>
                 </div>
 
@@ -245,6 +253,7 @@ const Header = () => {
                 <div className="flex flex-col gap-2.5 mt-2 p-[19px] border-2 border-white/10 rounded-[9px] bg-white/5 overflow-y-auto flex-1">
                   <a
                     href="#inicio"
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="mobile-nav-link"
                   >
                     {t.header.mobileNavigation.home}
@@ -254,6 +263,7 @@ const Header = () => {
                   </a>
                   <a
                     href="#quem-faz-parte"
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="mobile-nav-link"
                   >
                     {t.header.mobileNavigation.team}
@@ -263,6 +273,7 @@ const Header = () => {
                   </a>
                   <a 
                     href="#sobre-nos" 
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="mobile-nav-link"
                   >
                     {t.header.mobileNavigation.about}
@@ -272,6 +283,7 @@ const Header = () => {
                   </a>
                   <a 
                     href="#planejamento" 
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="mobile-nav-link"
                   >
                     {t.header.mobileNavigation.planning}
@@ -281,6 +293,7 @@ const Header = () => {
                   </a>
                   <a 
                     href="#checklist" 
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="mobile-nav-link"
                   >
                     {t.header.mobileNavigation.checklist}
@@ -290,6 +303,7 @@ const Header = () => {
                   </a>
                   <a 
                     href="#depoimentos" 
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="mobile-nav-link"
                   >
                     {t.header.mobileNavigation.testimonials}
@@ -299,6 +313,7 @@ const Header = () => {
                   </a>
                   <a 
                     href="#tripulacao" 
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="mobile-nav-link"
                   >
                     {t.header.mobileNavigation.crew}
@@ -306,8 +321,10 @@ const Header = () => {
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </a>
+                  {/*
                   <a 
                     href="#faqs" 
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="mobile-nav-link"
                   >
                     {t.header.mobileNavigation.faqs}
@@ -315,6 +332,7 @@ const Header = () => {
                       <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </a>
+                  */}
                   {/* Mobile Language Selector 
                   <div className="mt-4 pt-4 border-t border-white/20">
                     <div className="text-white/70 text-sm mb-2 px-4 font-['Roboto',sans-serif] font-medium">Idioma</div>

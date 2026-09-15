@@ -12,6 +12,7 @@ const nextConfig = {
     PUBLIC_GOOGLE_TAG_ID: process.env.PUBLIC_GOOGLE_TAG_ID,
     PUBLIC_CLARITY_ID: process.env.PUBLIC_CLARITY_ID,
     VITE_GA_MEASUREMENT_ID: process.env.VITE_GA_MEASUREMENT_ID,
+    NEXT_PUBLIC_WEBHOOK_URL: process.env.NEXT_PUBLIC_WEBHOOK_URL,
   },
   eslint: {
     ignoreDuringBuilds: true,

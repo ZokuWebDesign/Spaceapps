@@ -40,7 +40,7 @@ const Companies = () => {
   ];
 
   return (
-    <section className="relative py-24 text-white overflow-hidden">
+    <section id="quem-faz-parte" className="relative py-24 text-white overflow-hidden scroll-mt-20">
 
       <img 
         src="/assets/vectors/stars.svg" 

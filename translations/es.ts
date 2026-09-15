@@ -127,8 +127,11 @@ export const es = {
       },
       success: {
         title: "¡Éxito! 🎉",
-        message: "¡Formulario enviado exitosamente!"
+        message: "¡Formulario enviado exitosamente!",
+        description: "Hemos recibido tus datos. ¡Nuestro equipo se pondrá en contacto por WhatsApp en el horario indicado!",
+        sendAnother: "Enviar otro contacto"
       },
+      sendingMessage: "Enviando tus datos...",
       error: {
         title: "Error",
         genericMessage: "Error al enviar formulario",

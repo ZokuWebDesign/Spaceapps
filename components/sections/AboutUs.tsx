@@ -80,7 +80,7 @@ const AboutUs = () => {
   };
 
   return (
-    <section className="relative pt-[50px] pb-[101px] px-4 lg:px-12 text-white overflow-hidden select-none">
+    <section id="sobre-nos" className="relative pt-[50px] pb-[101px] px-4 lg:px-12 text-white overflow-hidden select-none scroll-mt-20">
       
       <img 
         src="/assets/vectors/stars.svg" 
